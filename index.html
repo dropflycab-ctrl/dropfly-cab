@@ -70,11 +70,19 @@ footer{text-align:center;padding:22px;color:#65748a;font-size:13px}
 <div class="info" id="cabInfo"></div>
 
 <label>Pickup Area / Location</label>
-<input type="text" id="pickup" placeholder="Select pickup on map" required >
+<input type="text" id="pickup"
+placeholder="Enter pickup location or select terminal"
+list="airportTerminals" required>
 
 <label>Drop Location</label>
-<input type="text" id="drop" placeholder="Select drop on map" required >
+<input type="text" id="drop"
+placeholder="Enter drop location or select terminal"
+list="airportTerminals" required>
 
+<datalist id="airportTerminals">
+  <option value="Kempegowda International Airport - Terminal 1">
+  <option value="Kempegowda International Airport - Terminal 2">
+</datalist>
 
 
 <div id="map"></div>
