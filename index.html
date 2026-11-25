@@ -446,7 +446,9 @@ async function searchAddress(fieldId) {
 }
 
 // ADDRESS SUGGESTIONS FOR PICKUP AND DROP
-["pickup", "drop"].forEach(function(id) {
+const directionValue = document.getElementById("direction").value;
+const searchFields = directionValue === "airport" ? ["drop"] : ["pickup"];
+searchFields.forEach(function(id) {
   const field = document.getElementById(id);
 
   const list = document.createElement("div");
