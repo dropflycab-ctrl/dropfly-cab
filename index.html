@@ -445,14 +445,73 @@ async function searchAddress(fieldId) {
   }
 }
 
+// ADDRESS SUGGESTIONS FOR PICKUP AND DROP
 ["pickup", "drop"].forEach(function(id) {
   const field = document.getElementById(id);
 
-  field.addEventListener("keydown", function(event) {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      searchAddress(id);
-    }
+  const list = document.createElement("div");
+  list.style.background = "white";
+  list.style.border = "1px solid #ccc";
+  list.style.borderRadius = "8px";
+  list.style.maxHeight = "200px";
+  list.style.overflowY = "auto";
+  list.style.position = "relative";
+  list.style.zIndex = "9999";
+  field.insertAdjacentElement("afterend", list);
+
+  let timer;
+
+  field.addEventListener("input", function() {
+    clearTimeout(timer);
+    const query = field.value.trim();
+    list.innerHTML = "";
+
+    if (query.length < 3) return;
+
+    timer = setTimeout(async function() {
+      try {
+        const url = "https://photon.komoot.io/api/?q=" +
+          encodeURIComponent(query) +
+          "&lat=12.9716&lon=77.5946&limit=5";
+
+        const response = await fetch(url);
+        const data = await response.json();
+
+        list.innerHTML = "";
+
+        data.features.forEach(function(item) {
+          const p = item.properties;
+          const address = [
+            p.name, p.street, p.suburb,
+            p.city, p.state, p.postcode
+          ].filter(Boolean).filter((v, i, a) =>
+            a.indexOf(v) === i
+          ).join(", ");
+
+          if (!address) return;
+
+          const option = document.createElement("div");
+          option.textContent = address;
+          option.style.padding = "12px";
+          option.style.borderBottom = "1px solid #eee";
+          option.style.cursor = "pointer";
+
+          option.addEventListener("click", function() {
+            field.value = address;
+            list.innerHTML = "";
+            searchAddress(id);
+          });
+
+          list.appendChild(option);
+        });
+
+        if (!list.children.length) {
+          list.textContent = "No addresses found";
+        }
+      } catch (error) {
+        list.textContent = "Search unavailable. Try again.";
+      }
+    }, 700);
   });
 });
 
