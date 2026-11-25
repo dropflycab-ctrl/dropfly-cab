@@ -70,20 +70,20 @@ footer{text-align:center;padding:22px;color:#65748a;font-size:13px}
 <div class="info" id="cabInfo"></div>
 
 <label>Pickup Area / Location</label>
-<input type="text" id="pickup"
-placeholder="Enter pickup location or select terminal"
-list="airportTerminals" required>
+<input
+type="text"
+id="pickup"
+placeholder="Search address or paste Google Maps link"
+list="airportTerminals"
+autocomplete="off"
+required>
+<button type="button" id="useMyLocation">Use My Location</button>
 
 <label>Drop Location</label>
 <input type="text" id="drop"
 placeholder="Enter drop location or select terminal"
 list="airportTerminals" required>
-<label>Paste Google Maps Pickup Link</label>
-<input
-  type="url"
-  id="pickupMapLink"
-  placeholder="Paste shared Google Maps link here"
->
+
 <datalist id="airportTerminals">
   <option value="Kempegowda International Airport - Terminal 1">
   <option value="Kempegowda International Airport - Terminal 2">
@@ -330,45 +330,7 @@ map.on("click",async function(e){
       "Address not available. Location coordinates saved in the form.";
   }
 });
-document.getElementById("pickupMapLink").addEventListener("change", async function () {
-  const link = this.value.trim();
-  const pickupField = document.getElementById("pickup");
 
-  let lat = null;
-  let lon = null;
-
-  const match = link.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/) ||
-                link.match(/[?&](?:q|query)=(-?\d+\.\d+),\s*(-?\d+\.\d+)/) ||
-                link.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
-
-  if (match) {
-    lat = Number(match[1]);
-    lon = Number(match[2]);
-  } else {
-    alert("Full Google Maps link paste cheyyandi. Short link support next step lo add cheddam.");
-    return;
-  }
-
-  try {
-    const response = await fetch(
-      "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=" +
-      lat + "&lon=" + lon
-    );
-
-    if (!response.ok) throw new Error("Address not found");
-
-    const data = await response.json();
-    pickupField.value = data.display_name || lat + ", " + lon;
-
-    if (pickupMarker) map.removeLayer(pickupMarker);
-    pickupMarker = L.marker([lat, lon]).addTo(map);
-    pickupMarker.bindPopup("Pickup Location").openPopup();
-    map.setView([lat, lon], 16);
-  
-  } catch (error) {
-    alert("Address load avvaledu. Malli try cheyyandi.");
-  }
-});
 document.getElementById("bookingForm").addEventListener("submit",function(e){
   e.preventDefault();
 
