@@ -471,8 +471,8 @@ async function searchAddress(fieldId) {
     timer = setTimeout(async function() {
       try {
         const url = "https://photon.komoot.io/api/?q=" +
-          encodeURIComponent(query) +
-          "&lat=12.9716&lon=77.5946&limit=5";
+  encodeURIComponent(query) +
+  "&lat=15.3173&lon=75.7139&limit=10&bbox=74.0,11.5,78.6,18.5";
 
         const response = await fetch(url);
         const data = await response.json();
@@ -481,6 +481,7 @@ async function searchAddress(fieldId) {
 
         data.features.forEach(function(item) {
           const p = item.properties;
+          if (!p.state || !p.state.toLowerCase().includes("karnataka")) return;
           const address = [
             p.name, p.street, p.suburb,
             p.city, p.state, p.postcode
