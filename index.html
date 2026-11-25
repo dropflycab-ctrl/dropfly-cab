@@ -75,16 +75,10 @@ footer{text-align:center;padding:22px;color:#65748a;font-size:13px}
 <label>Drop Location</label>
 <input type="text" id="drop" placeholder="Select drop on map" required readonly>
 
-<label>Choose location to mark on map</label>
-<button type="button" class="map-button" id="pickupButton">
-Choose Pickup Location
-</button>
-<button type="button" class="map-button" id="dropButton">
-Choose Drop Location
-</button>
+
 
 <div id="map"></div>
-<p class="note" id="mapStatus">Choose Pickup or Drop, then tap the map to select a location.</p>
+
 
 <label>Travel Date</label>
 <input type="date" id="travelDate" required>
@@ -272,22 +266,12 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
   maxZoom:19
 }).addTo(map);
 
-let activeField="pickup";
+let activeField="drop";
 let pickupMarker=null;
 let dropMarker=null;
 let lastLookup=0;
 
-document.getElementById("pickupButton").addEventListener("click",()=>{
-  activeField="pickup";
-  document.getElementById("mapStatus").textContent=
-    "Pickup selected. Tap the map to mark pickup location.";
-});
 
-document.getElementById("dropButton").addEventListener("click",()=>{
-  activeField="drop";
-  document.getElementById("mapStatus").textContent=
-    "Drop selected. Tap the map to mark drop location.";
-});
 
 map.on("click",async function(e){
   const lat=e.latlng.lat;
