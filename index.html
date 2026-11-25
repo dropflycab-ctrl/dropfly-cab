@@ -381,6 +381,80 @@ document.getElementById("bookingForm").addEventListener("submit",function(e){
 updateCab();
 
 setTimeout(()=>map.invalidateSize(),500);
+  // FREE ADDRESS SEARCH FOR PICKUP AND DROP
+let searchRouteLine = null;
+
+async function searchAddress(fieldId) {
+  const field = document.getElementById(fieldId);
+  const query = field.value.trim();
+
+  if (!query) {
+    alert("Please enter an address");
+    return;
+  }
+
+  field.disabled = true;
+
+  try {
+    const url = "https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=in&q=" + encodeURIComponent(query + ", Bengaluru");
+
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Search failed");
+
+    const results = await response.json();
+    if (!results.length) {
+      alert("Address not found. Please try another address.");
+      return;
+    }
+
+    const place = results[0];
+    const lat = Number(place.lat);
+    const lon = Number(place.lon);
+
+    field.value = place.display_name;
+    activeField = fieldId;
+
+    if (fieldId === "pickup") {
+      if (pickupMarker) map.removeLayer(pickupMarker);
+      pickupMarker = L.marker([lat, lon]).addTo(map)
+        .bindPopup("Pickup Location").openPopup();
+    } else {
+      if (dropMarker) map.removeLayer(dropMarker);
+      dropMarker = L.marker([lat, lon]).addTo(map)
+        .bindPopup("Drop Location").openPopup();
+    }
+
+    if (pickupMarker && dropMarker) {
+      const points = [
+        pickupMarker.getLatLng(),
+        dropMarker.getLatLng()
+      ];
+
+      if (searchRouteLine) map.removeLayer(searchRouteLine);
+
+      searchRouteLine = L.polyline(points).addTo(map);
+      map.fitBounds(searchRouteLine.getBounds(), {padding:[30,30]});
+    } else {
+      map.setView([lat, lon], 15);
+    }
+
+  } catch (error) {
+    alert("Address search failed. Please try again.");
+  } finally {
+    field.disabled = false;
+  }
+}
+
+["pickup", "drop"].forEach(function(id) {
+  const field = document.getElementById(id);
+
+  field.addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      searchAddress(id);
+    }
+  });
+});
 
 
   
