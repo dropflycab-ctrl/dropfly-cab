@@ -466,6 +466,10 @@ searchFields.forEach(function(id) {
   field.addEventListener("input", function() {
     clearTimeout(timer);
     const query = field.value.trim();
+    if (query.toLowerCase().includes("terminal")) {
+  list.innerHTML = "";
+  return;
+  }
     list.innerHTML = "";
 
     if (query.length < 3) return;
