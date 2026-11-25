@@ -366,6 +366,7 @@ mapElement.parentNode.insertBefore(liveButton, mapElement);
 mapElement.parentNode.insertBefore(stopButton, mapElement);
 
 let liveWatchId = null;
+  let lastGpsAddressLookup = 0;
 
 liveButton.addEventListener("click", function () {
   if (!navigator.geolocation) {
@@ -376,14 +377,33 @@ liveButton.addEventListener("click", function () {
   liveButton.textContent = "Getting your location...";
 
   liveWatchId = navigator.geolocation.watchPosition(
-    function (position) {
+    async function (position) {
       const lat = position.coords.latitude;
       const lon = position.coords.longitude;
 
-      document.getElementById("pickup").value =
-        lat.toFixed(6) + ", " + lon.toFixed(6);
+      const pickupField = document.getElementById("pickup");
 
-      if (pickupMarker) {
+if (Date.now() - lastGpsAddressLookup > 15000) {
+  lastGpsAddressLookup = Date.now();
+
+  try {
+    const response = await fetch(
+      "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=" +
+      lat + "&lon=" + lon
+    );
+
+    if (!response.ok) throw new Error("Address lookup failed");
+
+    const data = await response.json();
+
+    pickupField.value = data.display_name ||
+      lat.toFixed(6) + ", " + lon.toFixed(6);
+
+  } catch (error) {
+    pickupField.value = lat.toFixed(6) + ", " + lon.toFixed(6);
+  }
+}
+      
         pickupMarker.setLatLng([lat, lon]);
       } else {
         pickupMarker = L.marker([lat, lon]).addTo(map);
