@@ -13,7 +13,6 @@ header h1{margin:0;font-size:28px}
 header p{margin:7px 0 0;color:#dce8f7}
 .hero{background:#173e6b;color:white;padding:30px 18px;text-align:center}
 .hero h2{font-size:27px;margin:0 0 10px}
-.hero p{margin:0}
 .container{max-width:650px;margin:20px auto;padding:0 14px}
 .card{background:white;padding:20px;border-radius:14px;margin-bottom:18px;box-shadow:0 3px 12px #00000012}
 h3{margin-top:0;color:#173e6b}
@@ -25,6 +24,7 @@ button{width:100%;padding:14px;background:#f4a900;color:#172033;border:0;border-
 .service{border:1px solid #dce3ed;border-radius:10px;padding:15px}
 .service h4{margin:0 0 7px;color:#173e6b}
 .result{background:#edf5ff;padding:14px;border-radius:9px;margin-top:15px;line-height:1.7}
+.info{background:#f5f8fc;padding:12px;border-radius:8px;margin-top:12px;line-height:1.6;font-size:14px}
 footer{text-align:center;padding:22px;color:#65748a;font-size:13px}
 </style>
 </head>
@@ -60,6 +60,8 @@ footer{text-align:center;padding:22px;color:#65748a;font-size:13px}
 <option value="suv">Personal SUV</option>
 </select>
 
+<div class="info" id="cabInfo"></div>
+
 <label>Pickup Area / Location</label>
 <input type="text" id="pickup" placeholder="Enter pickup location" required>
 
@@ -73,23 +75,19 @@ footer{text-align:center;padding:22px;color:#65748a;font-size:13px}
 <input type="time" id="flightTime" required>
 
 <label>Passengers</label>
-<select id="passengers" required>
-<option value="1">1 Passenger</option>
-<option value="2">2 Passengers</option>
-<option value="3">3 Passengers</option>
-<option value="4">4 Passengers</option>
-<option value="5">5 Passengers</option>
-</select>
+<select id="passengers" required></select>
+<p class="note" id="passengerNote"></p>
 
 <label>Mobile Number</label>
-<input type="tel" id="mobile" placeholder="Enter 10-digit mobile number" pattern="[0-9]{10}" maxlength="10" required>
+<input type="tel" id="mobile" placeholder="Enter 10-digit mobile number"
+pattern="[0-9]{10}" maxlength="10" required>
 
 <div class="result" id="slotResult">
-Select your trip direction and flight time to calculate pickup slot.
+Enter your flight time to calculate the pickup time.
 </div>
 
 <button type="submit">Check Booking Details</button>
-<p class="note">This is a booking preview. Online booking confirmation is not active yet.</p>
+<p class="note">This is a booking preview. Real online booking confirmation is not active yet.</p>
 
 </form>
 </div>
@@ -98,10 +96,10 @@ Select your trip direction and flight time to calculate pickup slot.
 <h3>Our Cab Services</h3>
 
 <div class="services">
-
 <div class="service">
 <h4>Shared Cab</h4>
-<p>Maximum 3 passengers. One big trolley bag and one small backpack per passenger.</p>
+<p>Maximum 3 passengers.</p>
+<p>Each passenger: 1 trolley bag (maximum 15 kg) + 1 small backpack (maximum 5 kg).</p>
 </div>
 
 <div class="service">
@@ -113,7 +111,6 @@ Select your trip direction and flight time to calculate pickup slot.
 <h4>Personal SUV</h4>
 <p>5 passengers + 3 trolley bags + 2 backpacks.</p>
 </div>
-
 </div>
 </div>
 
@@ -140,10 +137,47 @@ const airportSlots = [
 "16:00","18:00","20:00","22:00","00:00"
 ];
 
+const cab = document.getElementById("cab");
+const passengers = document.getElementById("passengers");
+const cabInfo = document.getElementById("cabInfo");
+const passengerNote = document.getElementById("passengerNote");
 const direction = document.getElementById("direction");
 const flightTime = document.getElementById("flightTime");
 const flightLabel = document.getElementById("flightLabel");
 const slotResult = document.getElementById("slotResult");
+
+const cabRules = {
+  shared: {
+    max:3,
+    info:"Maximum 3 passengers. Each passenger: 1 trolley bag up to 15 kg + 1 small backpack up to 5 kg."
+  },
+  sedan: {
+    max:4,
+    info:"Maximum 4 passengers + 2 trolley bags + 2 backpacks."
+  },
+  suv: {
+    max:5,
+    info:"Maximum 5 passengers + 3 trolley bags + 2 backpacks."
+  }
+};
+
+function updateCab(){
+  const rule = cabRules[cab.value];
+  const previous = Number(passengers.value) || 1;
+
+  passengers.innerHTML = "";
+
+  for(let i=1;i<=rule.max;i++){
+    const option = document.createElement("option");
+    option.value = i;
+    option.textContent = i + (i===1 ? " Passenger" : " Passengers");
+    passengers.appendChild(option);
+  }
+
+  passengers.value = Math.min(previous,rule.max);
+  cabInfo.textContent = rule.info;
+  passengerNote.textContent = "Maximum allowed: " + rule.max + " passengers.";
+}
 
 function formatTime(time){
   let [h,m] = time.split(":").map(Number);
@@ -161,7 +195,7 @@ function updateSlot(){
     : "Flight Landing Time";
 
   if(!time){
-    slotResult.textContent = "Please enter your flight time.";
+    slotResult.textContent = "Enter your flight time to calculate the pickup time.";
     return;
   }
 
@@ -177,14 +211,13 @@ function updateSlot(){
   target = (target + 1440) % 1440;
 
   const slots = trip === "city" ? citySlots : airportSlots;
-
   let nearest = slots[0];
   let smallestDifference = Infinity;
 
   slots.forEach(slot => {
     const [h,m] = slot.split(":").map(Number);
     const slotMinutes = h * 60 + m;
-    let difference = Math.abs(slotMinutes - target);
+    let difference = Math.abs(slotMinutes-target);
     difference = Math.min(difference,1440-difference);
 
     if(difference < smallestDifference){
@@ -193,10 +226,9 @@ function updateSlot(){
     }
   });
 
-  const targetHours = Math.floor(target/60);
-  const targetMinutes = target%60;
-  const targetTime = String(targetHours).padStart(2,"0") + ":" +
-                     String(targetMinutes).padStart(2,"0");
+  const targetTime =
+    String(Math.floor(target/60)).padStart(2,"0") + ":" +
+    String(target%60).padStart(2,"0");
 
   slotResult.innerHTML =
     "<b>Calculated pickup time:</b> " + formatTime(targetTime) +
@@ -205,6 +237,7 @@ function updateSlot(){
     "<br><br>Please confirm the available slot before booking.";
 }
 
+cab.addEventListener("change",updateCab);
 direction.addEventListener("change",updateSlot);
 flightTime.addEventListener("input",updateSlot);
 
@@ -214,17 +247,17 @@ document.getElementById("bookingForm").addEventListener("submit",function(e){
   if(!this.reportValidity()) return;
 
   updateSlot();
-
   alert("Booking preview only. Real booking confirmation is not active yet.");
 });
 
 const today = new Date();
-const localDate = new Date(today.getTime() - today.getTimezoneOffset()*60000)
+const localDate = new Date(today.getTime()-today.getTimezoneOffset()*60000)
   .toISOString().split("T")[0];
 
 document.getElementById("travelDate").min = localDate;
+
+updateCab();
 </script>
 
 </body>
-  </html>
-
+</html>
