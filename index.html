@@ -347,7 +347,83 @@ updateCab();
 
 setTimeout(()=>map.invalidateSize(),500);
 </script>
+// CUSTOMER LIVE LOCATION
+const liveButton = document.createElement("button");
+liveButton.type = "button";
+liveButton.textContent = "Use My Current Location";
+liveButton.style.background = "#16834a";
+liveButton.style.color = "white";
 
+const stopButton = document.createElement("button");
+stopButton.type = "button";
+stopButton.textContent = "Stop Live Location";
+stopButton.style.background = "#a83232";
+stopButton.style.color = "white";
+stopButton.style.display = "none";
+
+const mapElement = document.getElementById("map");
+mapElement.parentNode.insertBefore(liveButton, mapElement);
+mapElement.parentNode.insertBefore(stopButton, mapElement);
+
+let liveWatchId = null;
+
+liveButton.addEventListener("click", function () {
+  if (!navigator.geolocation) {
+    alert("Your browser does not support GPS location.");
+    return;
+  }
+
+  liveButton.textContent = "Getting your location...";
+
+  liveWatchId = navigator.geolocation.watchPosition(
+    function (position) {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+
+      document.getElementById("pickup").value =
+        lat.toFixed(6) + ", " + lon.toFixed(6);
+
+      if (pickupMarker) {
+        pickupMarker.setLatLng([lat, lon]);
+      } else {
+        pickupMarker = L.marker([lat, lon]).addTo(map);
+      }
+
+      pickupMarker.bindPopup("Your Live Location").openPopup();
+      map.setView([lat, lon], 16);
+
+      document.getElementById("mapStatus").textContent =
+        "Your live location is updating.";
+
+      liveButton.textContent = "Live Location Active";
+      stopButton.style.display = "block";
+    },
+    function (error) {
+      alert("Location permission allow cheyyandi. GPS on undali.");
+      liveButton.textContent = "Use My Current Location";
+    },
+    {
+      enableHighAccuracy: true,
+      maximumAge: 5000,
+      timeout: 15000
+    }
+  );
+});
+
+stopButton.addEventListener("click", function () {
+  if (liveWatchId !== null) {
+    navigator.geolocation.clearWatch(liveWatchId);
+    liveWatchId = null;
+  }
+
+  liveButton.textContent = "Use My Current Location";
+  stopButton.style.display = "none";
+
+  document.getElementById("mapStatus").textContent =
+    "Live location sharing stopped.";
+});
+  
+</script>
 </body>
   </html>
   
