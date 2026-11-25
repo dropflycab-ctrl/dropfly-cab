@@ -403,7 +403,7 @@ if (Date.now() - lastGpsAddressLookup > 15000) {
     pickupField.value = lat.toFixed(6) + ", " + lon.toFixed(6);
   }
 }
-      
+        if (pickupMarker) {      
         pickupMarker.setLatLng([lat, lon]);
       } else {
         pickupMarker = L.marker([lat, lon]).addTo(map);
