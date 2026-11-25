@@ -1,12 +1,230 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DropFly CAB</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DropFly CAB | Bengaluru Airport Cabs</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f4f7fb;color:#172033}
+header{background:#102b50;color:white;padding:20px;text-align:center}
+header h1{margin:0;font-size:28px}
+header p{margin:7px 0 0;color:#dce8f7}
+.hero{background:#173e6b;color:white;padding:30px 18px;text-align:center}
+.hero h2{font-size:27px;margin:0 0 10px}
+.hero p{margin:0}
+.container{max-width:650px;margin:20px auto;padding:0 14px}
+.card{background:white;padding:20px;border-radius:14px;margin-bottom:18px;box-shadow:0 3px 12px #00000012}
+h3{margin-top:0;color:#173e6b}
+label{display:block;font-weight:bold;margin:14px 0 6px}
+input,select{width:100%;padding:13px;border:1px solid #ccd5e0;border-radius:8px;font-size:16px;background:white}
+button{width:100%;padding:14px;background:#f4a900;color:#172033;border:0;border-radius:9px;font-size:17px;font-weight:bold;margin-top:18px}
+.note{font-size:13px;color:#65748a;line-height:1.5}
+.services{display:grid;grid-template-columns:1fr;gap:12px}
+.service{border:1px solid #dce3ed;border-radius:10px;padding:15px}
+.service h4{margin:0 0 7px;color:#173e6b}
+.result{background:#edf5ff;padding:14px;border-radius:9px;margin-top:15px;line-height:1.7}
+footer{text-align:center;padding:22px;color:#65748a;font-size:13px}
+</style>
 </head>
 <body>
-  <h1>Welcome to DropFly CAB</h1>
-  <p>Bengaluru Airport & City Cab Booking</p>
+
+<header>
+<h1>DropFly CAB</h1>
+<p>Bengaluru Airport & City Cab Service</p>
+</header>
+
+<section class="hero">
+<h2>Your Airport Ride, Made Easy</h2>
+<p>City to Airport | Airport to City</p>
+</section>
+
+<div class="container">
+
+<div class="card">
+<h3>Book Your Cab</h3>
+
+<form id="bookingForm">
+
+<label>Trip Direction</label>
+<select id="direction" required>
+<option value="city">City to Airport</option>
+<option value="airport">Airport to City</option>
+</select>
+
+<label>Cab Type</label>
+<select id="cab" required>
+<option value="shared">Shared Cab</option>
+<option value="sedan">Personal Sedan</option>
+<option value="suv">Personal SUV</option>
+</select>
+
+<label>Pickup Area / Location</label>
+<input type="text" id="pickup" placeholder="Enter pickup location" required>
+
+<label>Drop Location</label>
+<input type="text" id="drop" placeholder="Enter drop location" required>
+
+<label>Travel Date</label>
+<input type="date" id="travelDate" required>
+
+<label id="flightLabel">Flight Departure Time</label>
+<input type="time" id="flightTime" required>
+
+<label>Passengers</label>
+<select id="passengers" required>
+<option value="1">1 Passenger</option>
+<option value="2">2 Passengers</option>
+<option value="3">3 Passengers</option>
+<option value="4">4 Passengers</option>
+<option value="5">5 Passengers</option>
+</select>
+
+<label>Mobile Number</label>
+<input type="tel" id="mobile" placeholder="Enter 10-digit mobile number" pattern="[0-9]{10}" maxlength="10" required>
+
+<div class="result" id="slotResult">
+Select your trip direction and flight time to calculate pickup slot.
+</div>
+
+<button type="submit">Check Booking Details</button>
+<p class="note">This is a booking preview. Online booking confirmation is not active yet.</p>
+
+</form>
+</div>
+
+<div class="card">
+<h3>Our Cab Services</h3>
+
+<div class="services">
+
+<div class="service">
+<h4>Shared Cab</h4>
+<p>Maximum 3 passengers. One big trolley bag and one small backpack per passenger.</p>
+</div>
+
+<div class="service">
+<h4>Personal Sedan</h4>
+<p>4 passengers + 2 trolley bags + 2 backpacks.</p>
+</div>
+
+<div class="service">
+<h4>Personal SUV</h4>
+<p>5 passengers + 3 trolley bags + 2 backpacks.</p>
+</div>
+
+</div>
+</div>
+
+<div class="card">
+<h3>Payment Information</h3>
+<p>Customer pays the full trip fare directly to the driver by Cash or UPI.</p>
+</div>
+
+</div>
+
+<footer>
+© 2026 DropFly CAB. All Rights Reserved.
+</footer>
+
+<script>
+const citySlots = [
+"03:30","04:30","05:30","06:30","07:30",
+"09:00","11:00","13:00","15:00","17:00",
+"19:00","21:00","23:00"
+];
+
+const airportSlots = [
+"06:00","08:00","10:00","12:00","14:00",
+"16:00","18:00","20:00","22:00","00:00"
+];
+
+const direction = document.getElementById("direction");
+const flightTime = document.getElementById("flightTime");
+const flightLabel = document.getElementById("flightLabel");
+const slotResult = document.getElementById("slotResult");
+
+function formatTime(time){
+  let [h,m] = time.split(":").map(Number);
+  const suffix = h >= 12 ? "PM" : "AM";
+  h = h % 12 || 12;
+  return h + ":" + String(m).padStart(2,"0") + " " + suffix;
+}
+
+function updateSlot(){
+  const trip = direction.value;
+  const time = flightTime.value;
+
+  flightLabel.textContent = trip === "city"
+    ? "Flight Departure Time"
+    : "Flight Landing Time";
+
+  if(!time){
+    slotResult.textContent = "Please enter your flight time.";
+    return;
+  }
+
+  const [hours,minutes] = time.split(":").map(Number);
+  let target = hours * 60 + minutes;
+
+  if(trip === "city"){
+    target -= 120;
+  } else {
+    target += 45;
+  }
+
+  target = (target + 1440) % 1440;
+
+  const slots = trip === "city" ? citySlots : airportSlots;
+
+  let nearest = slots[0];
+  let smallestDifference = Infinity;
+
+  slots.forEach(slot => {
+    const [h,m] = slot.split(":").map(Number);
+    const slotMinutes = h * 60 + m;
+    let difference = Math.abs(slotMinutes - target);
+    difference = Math.min(difference,1440-difference);
+
+    if(difference < smallestDifference){
+      smallestDifference = difference;
+      nearest = slot;
+    }
+  });
+
+  const targetHours = Math.floor(target/60);
+  const targetMinutes = target%60;
+  const targetTime = String(targetHours).padStart(2,"0") + ":" +
+                     String(targetMinutes).padStart(2,"0");
+
+  slotResult.innerHTML =
+    "<b>Calculated pickup time:</b> " + formatTime(targetTime) +
+    "<br><b>Nearest available DropFly slot:</b> " + formatTime(nearest) +
+    "<br><b>Difference:</b> " + smallestDifference + " minutes" +
+    "<br><br>Please confirm the available slot before booking.";
+}
+
+direction.addEventListener("change",updateSlot);
+flightTime.addEventListener("input",updateSlot);
+
+document.getElementById("bookingForm").addEventListener("submit",function(e){
+  e.preventDefault();
+
+  if(!this.reportValidity()) return;
+
+  updateSlot();
+
+  alert("Booking preview only. Real booking confirmation is not active yet.");
+});
+
+const today = new Date();
+const localDate = new Date(today.getTime() - today.getTimezoneOffset()*60000)
+  .toISOString().split("T")[0];
+
+document.getElementById("travelDate").min = localDate;
+</script>
+
 </body>
-</html>
+  </html>
+
