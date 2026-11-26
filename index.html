@@ -293,22 +293,37 @@ const cabRules = {
   }
 };
 
+ 
 function updateCab() {
   const rule = cabRules[cab.value];
   const previous = Number(passengers.value) || 1;
+
   passengers.innerHTML = "";
 
-  for (let i = 1; i <= rule.max; i++) {
-    const option = document.createElement("option");
-    option.value = i;
-    option.textContent = i + (i === 1 ? " Passenger" : " Passengers");
-    passengers.appendChild(option);
+  if (cab.value === "shared") {
+    passengers.style.display = "";
+    passengers.previousElementSibling.style.display = "";
+    passengerNote.style.display = "";
+
+    for (let i = 1; i <= 3; i++) {
+      const option = document.createElement("option");
+      option.value = i;
+      option.textContent = i + (i === 1 ? " Passenger" : " Passengers");
+      passengers.appendChild(option);
+    }
+
+    passengers.value = String(previous <= 3 ? previous : 1);
+    passengerNote.textContent = "Maximum allowed: 3 passengers.";
+  } else {
+    passengers.style.display = "none";
+    passengers.previousElementSibling.style.display = "none";
+    passengerNote.style.display = "none";
+    passengers.value = String(rule.max);
   }
 
-  passengers.value = Math.min(previous, rule.max);
   cabInfo.textContent = rule.info;
-  passengerNote.textContent = "Maximum allowed: " + rule.max + " passengers.";
 }
+  
 
 function formatTime(time) {
   const [hours, minutes] = time.split(":").map(Number);
