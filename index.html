@@ -73,6 +73,11 @@ footer{text-align:center;padding:22px;color:#65748a;font-size:13px}
 <div class="info" id="cabInfo"></div>
 
 <label>Pickup Area / Location</label>
+<select id="airportPickupSelect" style="display:none" required>
+  <option value="">Select Airport Terminal</option>
+  <option value="Kempegowda International Airport - Terminal 1">Terminal 1</option>
+  <option value="Kempegowda International Airport - Terminal 2">Terminal 2</option>
+</select>
 <input
 type="text"
 id="pickup"
@@ -83,6 +88,11 @@ required>
 
 
 <label>Drop Location</label>
+<select id="airportDropSelect" style="display:none" required>
+  <option value="">Select Airport Terminal</option>
+  <option value="Kempegowda International Airport - Terminal 1">Terminal 1</option>
+  <option value="Kempegowda International Airport - Terminal 2">Terminal 2</option>
+</select>
 <input type="text" id="drop"
 placeholder="Enter drop location or select terminal"
 list="airportTerminals" required>
@@ -116,9 +126,13 @@ Select pickup, drop and cab type to see your fare.
 <select id="passengers" required></select>
 <p class="note" id="passengerNote"></p>
 
+<label>Customer Name</label>
+<input type="text" id="customerName" name="customerName"
+placeholder="Enter customer full name" autocomplete="name" maxlength="80" required>
+
 <label>Mobile Number</label>
-<input type="tel" id="mobile" placeholder="Enter 10-digit mobile number"
-pattern="[0-9]{10}" maxlength="10" required>
+<input type="tel" id="mobile" name="mobile" placeholder="Enter 10-digit mobile number"
+pattern="[0-9]{10}" maxlength="10" inputmode="numeric" autocomplete="tel" required>
 
 <div class="result" id="slotResult">
 Enter your flight time to calculate the pickup time.
@@ -716,6 +730,7 @@ function updateAirportTerminalMode() {
     if (select === airportPickupSelect) pickupField.value = select.value;
     else dropField.value = select.value;
     updateFareFromFields();
+    if (select.value) searchAddress(select === airportPickupSelect ? "pickup" : "drop");
   });
 });
 
@@ -776,7 +791,9 @@ document.getElementById("bookingForm").addEventListener("submit", function (even
     }
   }
 
-  alert("KAVILO " + cab.options[cab.selectedIndex].text + " fare: ₹" + selectedFare.toLocaleString("en-IN") + "\\nBooking preview only. Real booking confirmation is not active yet.");
+  const customerName = document.getElementById("customerName").value.trim();
+  const customerMobile = document.getElementById("mobile").value.trim();
+  alert("Customer: " + customerName + "\\nMobile: " + customerMobile + "\\nKAVILO " + cab.options[cab.selectedIndex].text + " fare: ₹" + selectedFare.toLocaleString("en-IN") + "\\nBooking preview only. Real booking confirmation is not active yet.");
 });
 
 updateCab();
