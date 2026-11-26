@@ -35,6 +35,15 @@ button{width:100%;padding:14px;background:#f4a900;color:#172033;border:0;border-
 .result{background:#edf5ff;padding:14px;border-radius:9px;margin-top:15px;line-height:1.7}
 .info{background:#f5f8fc;padding:12px;border-radius:8px;margin-top:12px;line-height:1.6;font-size:14px}
 footer{text-align:center;padding:22px;color:#65748a;font-size:13px}
+
+.rate-table-wrap{overflow-x:auto;width:100%;border:1px solid #dce3ed;border-radius:9px}
+.rate-table{border-collapse:collapse;width:100%;min-width:720px;font-size:13px}
+.rate-table th,.rate-table td{padding:9px 8px;border:1px solid #dce3ed;text-align:center;white-space:nowrap}
+.rate-table thead tr:first-child th{background:#173e6b;color:white}
+.rate-table thead tr:nth-child(2) th{background:#e9f0f8;color:#172033}
+.rate-table tbody th{text-align:left;font-weight:600;background:#f7f9fc}
+.rate-table tbody tr:nth-child(even){background:#f1f5f9}
+
 </style>
 </head>
 
@@ -144,6 +153,75 @@ Enter your flight time to calculate the pickup time.
 <p>5 passengers + 3 trolley bags + 2 backpacks.</p>
 </div>
 </div>
+</div>
+
+
+<div class="card" id="rate-card">
+<h3>KAVILO Rate Card</h3>
+<p class="note">All 52 pickup areas • Amounts in INR (₹). Select your pickup area and cab type to view the applicable fare.</p>
+<div class="rate-table-wrap">
+<table class="rate-table">
+<thead>
+<tr><th rowspan="2">Pickup Area</th><th colspan="3">City → Airport</th><th colspan="3">Airport → City</th></tr>
+<tr><th>Shared<br>(1 Seat)</th><th>Personal<br>Sedan</th><th>Personal<br>SUV</th><th>Shared<br>(1 Seat)</th><th>Personal<br>Sedan</th><th>Personal<br>SUV</th></tr>
+</thead>
+<tbody>
+<tr><th scope="row">Chandhapura</th><td>₹660</td><td>₹1,060</td><td>₹1,810</td><td>₹760</td><td>₹1,160</td><td>₹1,910</td></tr>
+<tr><th scope="row">Bommasandra</th><td>₹640</td><td>₹1,030</td><td>₹1,760</td><td>₹740</td><td>₹1,130</td><td>₹1,860</td></tr>
+<tr><th scope="row">Jigani</th><td>₹690</td><td>₹1,110</td><td>₹1,890</td><td>₹790</td><td>₹1,210</td><td>₹1,990</td></tr>
+<tr><th scope="row">Hebbagodi</th><td>₹630</td><td>₹1,020</td><td>₹1,730</td><td>₹730</td><td>₹1,120</td><td>₹1,830</td></tr>
+<tr><th scope="row">Electronic City – Neeladri Nagar</th><td>₹620</td><td>₹1,010</td><td>₹1,720</td><td>₹720</td><td>₹1,110</td><td>₹1,820</td></tr>
+<tr><th scope="row">Electronic City – Phase 1</th><td>₹600</td><td>₹980</td><td>₹1,670</td><td>₹700</td><td>₹1,080</td><td>₹1,770</td></tr>
+<tr><th scope="row">Kammasandra – Hebbagodi</th><td>₹630</td><td>₹1,020</td><td>₹1,750</td><td>₹730</td><td>₹1,120</td><td>₹1,850</td></tr>
+<tr><th scope="row">Electronic City – Phase 2</th><td>₹610</td><td>₹990</td><td>₹1,690</td><td>₹710</td><td>₹1,090</td><td>₹1,790</td></tr>
+<tr><th scope="row">Sarjapura</th><td>₹710</td><td>₹1,140</td><td>₹1,950</td><td>₹810</td><td>₹1,240</td><td>₹2,050</td></tr>
+<tr><th scope="row">Dommasandra</th><td>₹660</td><td>₹1,060</td><td>₹1,810</td><td>₹760</td><td>₹1,160</td><td>₹1,910</td></tr>
+<tr><th scope="row">Kodati Gate</th><td>₹650</td><td>₹1,050</td><td>₹1,780</td><td>₹750</td><td>₹1,150</td><td>₹1,880</td></tr>
+<tr><th scope="row">Konapana Agrahara</th><td>₹620</td><td>₹1,010</td><td>₹1,730</td><td>₹720</td><td>₹1,110</td><td>₹1,830</td></tr>
+<tr><th scope="row">Hosa Road</th><td>₹560</td><td>₹920</td><td>₹1,580</td><td>₹660</td><td>₹1,020</td><td>₹1,680</td></tr>
+<tr><th scope="row">Gattahalli</th><td>₹660</td><td>₹1,070</td><td>₹1,830</td><td>₹760</td><td>₹1,170</td><td>₹1,930</td></tr>
+<tr><th scope="row">Choodasandra</th><td>₹630</td><td>₹1,030</td><td>₹1,750</td><td>₹730</td><td>₹1,130</td><td>₹1,850</td></tr>
+<tr><th scope="row">Rayasandra</th><td>₹580</td><td>₹950</td><td>₹1,620</td><td>₹680</td><td>₹1,050</td><td>₹1,720</td></tr>
+<tr><th scope="row">Harlur</th><td>₹620</td><td>₹1,000</td><td>₹1,710</td><td>₹720</td><td>₹1,100</td><td>₹1,810</td></tr>
+<tr><th scope="row">Kudlu Gate</th><td>₹540</td><td>₹890</td><td>₹1,520</td><td>₹640</td><td>₹990</td><td>₹1,620</td></tr>
+<tr><th scope="row">Begur</th><td>₹560</td><td>₹910</td><td>₹1,560</td><td>₹660</td><td>₹1,010</td><td>₹1,660</td></tr>
+<tr><th scope="row">Hulimav</th><td>₹550</td><td>₹910</td><td>₹1,550</td><td>₹650</td><td>₹1,010</td><td>₹1,650</td></tr>
+<tr><th scope="row">Bommanahalli</th><td>₹520</td><td>₹860</td><td>₹1,470</td><td>₹620</td><td>₹960</td><td>₹1,570</td></tr>
+<tr><th scope="row">HSR Layout</th><td>₹630</td><td>₹1,020</td><td>₹1,730</td><td>₹730</td><td>₹1,120</td><td>₹1,830</td></tr>
+<tr><th scope="row">Kotanur</th><td>₹550</td><td>₹910</td><td>₹1,550</td><td>₹650</td><td>₹1,010</td><td>₹1,650</td></tr>
+<tr><th scope="row">JP Nagar</th><td>₹530</td><td>₹870</td><td>₹1,480</td><td>₹630</td><td>₹970</td><td>₹1,580</td></tr>
+<tr><th scope="row">Arekere</th><td>₹530</td><td>₹870</td><td>₹1,490</td><td>₹630</td><td>₹970</td><td>₹1,590</td></tr>
+<tr><th scope="row">BTM 1st Stage</th><td>₹500</td><td>₹830</td><td>₹1,420</td><td>₹600</td><td>₹930</td><td>₹1,520</td></tr>
+<tr><th scope="row">BTM 2nd Stage</th><td>₹510</td><td>₹850</td><td>₹1,450</td><td>₹610</td><td>₹950</td><td>₹1,550</td></tr>
+<tr><th scope="row">Jayanagar</th><td>₹480</td><td>₹800</td><td>₹1,370</td><td>₹580</td><td>₹900</td><td>₹1,470</td></tr>
+<tr><th scope="row">Banashankari</th><td>₹500</td><td>₹820</td><td>₹1,410</td><td>₹600</td><td>₹920</td><td>₹1,510</td></tr>
+<tr><th scope="row">Royal Meenakshi Mall – Bannerghatta Road</th><td>₹550</td><td>₹890</td><td>₹1,530</td><td>₹650</td><td>₹990</td><td>₹1,630</td></tr>
+<tr><th scope="row">Lalbagh</th><td>₹460</td><td>₹770</td><td>₹1,320</td><td>₹560</td><td>₹870</td><td>₹1,420</td></tr>
+<tr><th scope="row">Koramangala</th><td>₹500</td><td>₹820</td><td>₹1,410</td><td>₹600</td><td>₹920</td><td>₹1,510</td></tr>
+<tr><th scope="row">Indiranagar</th><td>₹490</td><td>₹810</td><td>₹1,390</td><td>₹590</td><td>₹910</td><td>₹1,490</td></tr>
+<tr><th scope="row">Ibbalur</th><td>₹590</td><td>₹960</td><td>₹1,640</td><td>₹690</td><td>₹1,060</td><td>₹1,740</td></tr>
+<tr><th scope="row">Bellandur</th><td>₹570</td><td>₹930</td><td>₹1,590</td><td>₹670</td><td>₹1,030</td><td>₹1,690</td></tr>
+<tr><th scope="row">Kadubeesanahalli</th><td>₹550</td><td>₹900</td><td>₹1,530</td><td>₹650</td><td>₹1,000</td><td>₹1,630</td></tr>
+<tr><th scope="row">Maratahalli</th><td>₹530</td><td>₹870</td><td>₹1,480</td><td>₹630</td><td>₹970</td><td>₹1,580</td></tr>
+<tr><th scope="row">Mahadevapura</th><td>₹490</td><td>₹810</td><td>₹1,390</td><td>₹590</td><td>₹910</td><td>₹1,490</td></tr>
+<tr><th scope="row">Fraser Town</th><td>₹430</td><td>₹720</td><td>₹1,230</td><td>₹530</td><td>₹820</td><td>₹1,330</td></tr>
+<tr><th scope="row">Cox Town</th><td>₹460</td><td>₹760</td><td>₹1,310</td><td>₹560</td><td>₹860</td><td>₹1,410</td></tr>
+<tr><th scope="row">Halasuru</th><td>₹450</td><td>₹740</td><td>₹1,280</td><td>₹550</td><td>₹840</td><td>₹1,380</td></tr>
+<tr><th scope="row">HAL</th><td>₹580</td><td>₹940</td><td>₹1,610</td><td>₹680</td><td>₹1,040</td><td>₹1,710</td></tr>
+<tr><th scope="row">Domlur</th><td>₹480</td><td>₹790</td><td>₹1,360</td><td>₹580</td><td>₹890</td><td>₹1,460</td></tr>
+<tr><th scope="row">CV Raman Nagar</th><td>₹480</td><td>₹790</td><td>₹1,360</td><td>₹580</td><td>₹890</td><td>₹1,460</td></tr>
+<tr><th scope="row">Garudachar Palya</th><td>₹500</td><td>₹830</td><td>₹1,430</td><td>₹600</td><td>₹930</td><td>₹1,530</td></tr>
+<tr><th scope="row">Hoodi</th><td>₹520</td><td>₹850</td><td>₹1,460</td><td>₹620</td><td>₹950</td><td>₹1,560</td></tr>
+<tr><th scope="row">Whitefield</th><td>₹460</td><td>₹770</td><td>₹1,320</td><td>₹560</td><td>₹870</td><td>₹1,420</td></tr>
+<tr><th scope="row">Vartur</th><td>₹500</td><td>₹820</td><td>₹1,410</td><td>₹600</td><td>₹920</td><td>₹1,510</td></tr>
+<tr><th scope="row">Mullur</th><td>₹620</td><td>₹1,010</td><td>₹1,720</td><td>₹720</td><td>₹1,110</td><td>₹1,820</td></tr>
+<tr><th scope="row">Balagere</th><td>₹580</td><td>₹950</td><td>₹1,630</td><td>₹680</td><td>₹1,050</td><td>₹1,730</td></tr>
+<tr><th scope="row">Pattandur Agrahara</th><td>₹470</td><td>₹780</td><td>₹1,340</td><td>₹570</td><td>₹880</td><td>₹1,440</td></tr>
+<tr><th scope="row">Tin Factory</th><td>₹480</td><td>₹790</td><td>₹1,360</td><td>₹580</td><td>₹890</td><td>₹1,460</td></tr>
+</tbody>
+</table>
+</div>
+<p class="note">Rates shown are the proposed fares from the supplied KAVILO rate card.</p>
 </div>
 
 <div class="card">
