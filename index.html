@@ -34,7 +34,12 @@ button{width:100%;padding:14px;background:#f4a900;color:#172033;border:0;border-
 .service h4{margin:0 0 7px;color:#173e6b}
 .result{background:#edf5ff;padding:14px;border-radius:9px;margin-top:15px;line-height:1.7}
 .info{background:#f5f8fc;padding:12px;border-radius:8px;margin-top:12px;line-height:1.6;font-size:14px}
-footer{text-align:center;padding:22px;color:#65748a;font-size:13px}
+footer{text-align:center;padding:22px 22px 92px;color:#65748a;font-size:13px}
+.bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:9999;display:grid;grid-template-columns:repeat(4,1fr);gap:0;background:#fff;border-top:1px solid #dce3ed;box-shadow:0 -3px 14px #00000012;padding:7px 4px calc(7px + env(safe-area-inset-bottom));}
+.bottom-nav button{margin:0;padding:8px 2px;background:transparent;color:#173e6b;border-radius:8px;font-size:12px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.bottom-nav button .nav-icon{font-size:19px;line-height:1.2}
+.bottom-nav button.active{background:#edf5ff;color:#102b50}
+body{padding-bottom:76px}
 
 .step-screen{display:none}.step-screen.active{display:block}.brand-mark{font-size:34px;font-weight:800;letter-spacing:2px;color:#173e6b;text-align:center;margin:8px 0}.welcome-header{background:#102b50;color:white;padding:20px;text-align:center;min-height:94px;display:flex;align-items:center;justify-content:center}.welcome-header p{margin:0;color:#dce8f7}.welcome-main{min-height:100svh;display:flex;align-items:center;justify-content:center;padding:20px 0;background:#102b50}.welcome-card{width:100%;min-height:460px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px 20px}.welcome-card h2{color:#173e6b}.welcome-card button{margin-top:24px}.google-btn{background:#fff;border:1px solid #cbd5e1;color:#172033}.secondary-btn{background:#173e6b;color:#fff}.step-note{font-size:13px;color:#65748a;line-height:1.5;text-align:center}.pay-choice{display:flex;align-items:center;gap:10px;border:1px solid #dce3ed;border-radius:10px;padding:14px;margin:10px 0}.pay-choice input{width:auto}.summary-line{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #edf0f5}
 </style>
@@ -183,6 +188,12 @@ Enter your flight time to calculate the pickup time.
 <footer>
 © 2026 KAVILO. All Rights Reserved.
 </footer>
+<nav class="bottom-nav" aria-label="Customer navigation">
+  <button type="button" class="active" data-nav="home"><span class="nav-icon">⌂</span><span>Home</span></button>
+  <button type="button" data-nav="bookings"><span class="nav-icon">▣</span><span>My Booking</span></button>
+  <button type="button" data-nav="help"><span class="nav-icon">?</span><span>Help</span></button>
+  <button type="button" data-nav="account"><span class="nav-icon">●</span><span>Account</span></button>
+</nav>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -841,6 +852,17 @@ document.getElementById("previewContinue").addEventListener("click",()=>showKavi
 document.getElementById("backBooking").addEventListener("click",()=>showKaviloScreen("bookingScreen"));
 document.getElementById("confirmPreview").addEventListener("click",()=>{const b=window.kaviloBookingPreview;if(!b)return;const method=document.querySelector('input[name="paymentMethod"]:checked').value;document.getElementById("confirmationSummary").innerHTML=document.getElementById("paymentSummary").innerHTML+"<div class='summary-line'><span>Payment preference</span><b>"+method+" (pay driver directly)</b></div>";showKaviloScreen("confirmedScreen");});
 document.getElementById("returnHome").addEventListener("click",()=>showKaviloScreen("welcomeScreen"));
+document.querySelectorAll(".bottom-nav button").forEach(btn=>btn.addEventListener("click",()=>{
+  document.querySelectorAll(".bottom-nav button").forEach(b=>b.classList.toggle("active",b===btn));
+  const page=btn.dataset.nav;
+  if(page==="home") showKaviloScreen("welcomeScreen");
+  else if(page==="bookings") {
+    if(window.kaviloBookingPreview) showKaviloScreen("confirmedScreen");
+    else { alert("No booking preview yet. Please book your cab first."); showKaviloScreen("welcomeScreen"); }
+  }
+  else if(page==="help") alert("KAVILO Help: Please contact the KAVILO support team. Support contact details will be added soon.");
+  else if(page==="account") showKaviloScreen("loginScreen");
+}));
 updateCab();
 updateSlot();
 updateFareFromFields();
