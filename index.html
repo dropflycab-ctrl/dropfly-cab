@@ -35,15 +35,6 @@ button{width:100%;padding:14px;background:#f4a900;color:#172033;border:0;border-
 .result{background:#edf5ff;padding:14px;border-radius:9px;margin-top:15px;line-height:1.7}
 .info{background:#f5f8fc;padding:12px;border-radius:8px;margin-top:12px;line-height:1.6;font-size:14px}
 footer{text-align:center;padding:22px;color:#65748a;font-size:13px}
-
-.rate-table-wrap{overflow-x:auto;width:100%;border:1px solid #dce3ed;border-radius:9px}
-.rate-table{border-collapse:collapse;width:100%;min-width:720px;font-size:13px}
-.rate-table th,.rate-table td{padding:9px 8px;border:1px solid #dce3ed;text-align:center;white-space:nowrap}
-.rate-table thead tr:first-child th{background:#173e6b;color:white}
-.rate-table thead tr:nth-child(2) th{background:#e9f0f8;color:#172033}
-.rate-table tbody th{text-align:left;font-weight:600;background:#f7f9fc}
-.rate-table tbody tr:nth-child(even){background:#f1f5f9}
-
 </style>
 </head>
 
@@ -80,6 +71,11 @@ footer{text-align:center;padding:22px;color:#65748a;font-size:13px}
 </select>
 
 <div class="info" id="cabInfo"></div>
+
+<div class="result" id="fareResult" aria-live="polite" style="margin:10px 0 16px">
+Select pickup, drop and cab type to see your fare.
+</div>
+
 
 <label>Pickup Area / Location</label>
 <input
@@ -155,75 +151,6 @@ Enter your flight time to calculate the pickup time.
 </div>
 </div>
 
-
-<div class="card" id="rate-card">
-<h3>KAVILO Rate Card</h3>
-<p class="note">All 52 pickup areas • Amounts in INR (₹). Select your pickup area and cab type to view the applicable fare.</p>
-<div class="rate-table-wrap">
-<table class="rate-table">
-<thead>
-<tr><th rowspan="2">Pickup Area</th><th colspan="3">City → Airport</th><th colspan="3">Airport → City</th></tr>
-<tr><th>Shared<br>(1 Seat)</th><th>Personal<br>Sedan</th><th>Personal<br>SUV</th><th>Shared<br>(1 Seat)</th><th>Personal<br>Sedan</th><th>Personal<br>SUV</th></tr>
-</thead>
-<tbody>
-<tr><th scope="row">Chandhapura</th><td>₹660</td><td>₹1,060</td><td>₹1,810</td><td>₹760</td><td>₹1,160</td><td>₹1,910</td></tr>
-<tr><th scope="row">Bommasandra</th><td>₹640</td><td>₹1,030</td><td>₹1,760</td><td>₹740</td><td>₹1,130</td><td>₹1,860</td></tr>
-<tr><th scope="row">Jigani</th><td>₹690</td><td>₹1,110</td><td>₹1,890</td><td>₹790</td><td>₹1,210</td><td>₹1,990</td></tr>
-<tr><th scope="row">Hebbagodi</th><td>₹630</td><td>₹1,020</td><td>₹1,730</td><td>₹730</td><td>₹1,120</td><td>₹1,830</td></tr>
-<tr><th scope="row">Electronic City – Neeladri Nagar</th><td>₹620</td><td>₹1,010</td><td>₹1,720</td><td>₹720</td><td>₹1,110</td><td>₹1,820</td></tr>
-<tr><th scope="row">Electronic City – Phase 1</th><td>₹600</td><td>₹980</td><td>₹1,670</td><td>₹700</td><td>₹1,080</td><td>₹1,770</td></tr>
-<tr><th scope="row">Kammasandra – Hebbagodi</th><td>₹630</td><td>₹1,020</td><td>₹1,750</td><td>₹730</td><td>₹1,120</td><td>₹1,850</td></tr>
-<tr><th scope="row">Electronic City – Phase 2</th><td>₹610</td><td>₹990</td><td>₹1,690</td><td>₹710</td><td>₹1,090</td><td>₹1,790</td></tr>
-<tr><th scope="row">Sarjapura</th><td>₹710</td><td>₹1,140</td><td>₹1,950</td><td>₹810</td><td>₹1,240</td><td>₹2,050</td></tr>
-<tr><th scope="row">Dommasandra</th><td>₹660</td><td>₹1,060</td><td>₹1,810</td><td>₹760</td><td>₹1,160</td><td>₹1,910</td></tr>
-<tr><th scope="row">Kodati Gate</th><td>₹650</td><td>₹1,050</td><td>₹1,780</td><td>₹750</td><td>₹1,150</td><td>₹1,880</td></tr>
-<tr><th scope="row">Konapana Agrahara</th><td>₹620</td><td>₹1,010</td><td>₹1,730</td><td>₹720</td><td>₹1,110</td><td>₹1,830</td></tr>
-<tr><th scope="row">Hosa Road</th><td>₹560</td><td>₹920</td><td>₹1,580</td><td>₹660</td><td>₹1,020</td><td>₹1,680</td></tr>
-<tr><th scope="row">Gattahalli</th><td>₹660</td><td>₹1,070</td><td>₹1,830</td><td>₹760</td><td>₹1,170</td><td>₹1,930</td></tr>
-<tr><th scope="row">Choodasandra</th><td>₹630</td><td>₹1,030</td><td>₹1,750</td><td>₹730</td><td>₹1,130</td><td>₹1,850</td></tr>
-<tr><th scope="row">Rayasandra</th><td>₹580</td><td>₹950</td><td>₹1,620</td><td>₹680</td><td>₹1,050</td><td>₹1,720</td></tr>
-<tr><th scope="row">Harlur</th><td>₹620</td><td>₹1,000</td><td>₹1,710</td><td>₹720</td><td>₹1,100</td><td>₹1,810</td></tr>
-<tr><th scope="row">Kudlu Gate</th><td>₹540</td><td>₹890</td><td>₹1,520</td><td>₹640</td><td>₹990</td><td>₹1,620</td></tr>
-<tr><th scope="row">Begur</th><td>₹560</td><td>₹910</td><td>₹1,560</td><td>₹660</td><td>₹1,010</td><td>₹1,660</td></tr>
-<tr><th scope="row">Hulimav</th><td>₹550</td><td>₹910</td><td>₹1,550</td><td>₹650</td><td>₹1,010</td><td>₹1,650</td></tr>
-<tr><th scope="row">Bommanahalli</th><td>₹520</td><td>₹860</td><td>₹1,470</td><td>₹620</td><td>₹960</td><td>₹1,570</td></tr>
-<tr><th scope="row">HSR Layout</th><td>₹630</td><td>₹1,020</td><td>₹1,730</td><td>₹730</td><td>₹1,120</td><td>₹1,830</td></tr>
-<tr><th scope="row">Kotanur</th><td>₹550</td><td>₹910</td><td>₹1,550</td><td>₹650</td><td>₹1,010</td><td>₹1,650</td></tr>
-<tr><th scope="row">JP Nagar</th><td>₹530</td><td>₹870</td><td>₹1,480</td><td>₹630</td><td>₹970</td><td>₹1,580</td></tr>
-<tr><th scope="row">Arekere</th><td>₹530</td><td>₹870</td><td>₹1,490</td><td>₹630</td><td>₹970</td><td>₹1,590</td></tr>
-<tr><th scope="row">BTM 1st Stage</th><td>₹500</td><td>₹830</td><td>₹1,420</td><td>₹600</td><td>₹930</td><td>₹1,520</td></tr>
-<tr><th scope="row">BTM 2nd Stage</th><td>₹510</td><td>₹850</td><td>₹1,450</td><td>₹610</td><td>₹950</td><td>₹1,550</td></tr>
-<tr><th scope="row">Jayanagar</th><td>₹480</td><td>₹800</td><td>₹1,370</td><td>₹580</td><td>₹900</td><td>₹1,470</td></tr>
-<tr><th scope="row">Banashankari</th><td>₹500</td><td>₹820</td><td>₹1,410</td><td>₹600</td><td>₹920</td><td>₹1,510</td></tr>
-<tr><th scope="row">Royal Meenakshi Mall – Bannerghatta Road</th><td>₹550</td><td>₹890</td><td>₹1,530</td><td>₹650</td><td>₹990</td><td>₹1,630</td></tr>
-<tr><th scope="row">Lalbagh</th><td>₹460</td><td>₹770</td><td>₹1,320</td><td>₹560</td><td>₹870</td><td>₹1,420</td></tr>
-<tr><th scope="row">Koramangala</th><td>₹500</td><td>₹820</td><td>₹1,410</td><td>₹600</td><td>₹920</td><td>₹1,510</td></tr>
-<tr><th scope="row">Indiranagar</th><td>₹490</td><td>₹810</td><td>₹1,390</td><td>₹590</td><td>₹910</td><td>₹1,490</td></tr>
-<tr><th scope="row">Ibbalur</th><td>₹590</td><td>₹960</td><td>₹1,640</td><td>₹690</td><td>₹1,060</td><td>₹1,740</td></tr>
-<tr><th scope="row">Bellandur</th><td>₹570</td><td>₹930</td><td>₹1,590</td><td>₹670</td><td>₹1,030</td><td>₹1,690</td></tr>
-<tr><th scope="row">Kadubeesanahalli</th><td>₹550</td><td>₹900</td><td>₹1,530</td><td>₹650</td><td>₹1,000</td><td>₹1,630</td></tr>
-<tr><th scope="row">Maratahalli</th><td>₹530</td><td>₹870</td><td>₹1,480</td><td>₹630</td><td>₹970</td><td>₹1,580</td></tr>
-<tr><th scope="row">Mahadevapura</th><td>₹490</td><td>₹810</td><td>₹1,390</td><td>₹590</td><td>₹910</td><td>₹1,490</td></tr>
-<tr><th scope="row">Fraser Town</th><td>₹430</td><td>₹720</td><td>₹1,230</td><td>₹530</td><td>₹820</td><td>₹1,330</td></tr>
-<tr><th scope="row">Cox Town</th><td>₹460</td><td>₹760</td><td>₹1,310</td><td>₹560</td><td>₹860</td><td>₹1,410</td></tr>
-<tr><th scope="row">Halasuru</th><td>₹450</td><td>₹740</td><td>₹1,280</td><td>₹550</td><td>₹840</td><td>₹1,380</td></tr>
-<tr><th scope="row">HAL</th><td>₹580</td><td>₹940</td><td>₹1,610</td><td>₹680</td><td>₹1,040</td><td>₹1,710</td></tr>
-<tr><th scope="row">Domlur</th><td>₹480</td><td>₹790</td><td>₹1,360</td><td>₹580</td><td>₹890</td><td>₹1,460</td></tr>
-<tr><th scope="row">CV Raman Nagar</th><td>₹480</td><td>₹790</td><td>₹1,360</td><td>₹580</td><td>₹890</td><td>₹1,460</td></tr>
-<tr><th scope="row">Garudachar Palya</th><td>₹500</td><td>₹830</td><td>₹1,430</td><td>₹600</td><td>₹930</td><td>₹1,530</td></tr>
-<tr><th scope="row">Hoodi</th><td>₹520</td><td>₹850</td><td>₹1,460</td><td>₹620</td><td>₹950</td><td>₹1,560</td></tr>
-<tr><th scope="row">Whitefield</th><td>₹460</td><td>₹770</td><td>₹1,320</td><td>₹560</td><td>₹870</td><td>₹1,420</td></tr>
-<tr><th scope="row">Vartur</th><td>₹500</td><td>₹820</td><td>₹1,410</td><td>₹600</td><td>₹920</td><td>₹1,510</td></tr>
-<tr><th scope="row">Mullur</th><td>₹620</td><td>₹1,010</td><td>₹1,720</td><td>₹720</td><td>₹1,110</td><td>₹1,820</td></tr>
-<tr><th scope="row">Balagere</th><td>₹580</td><td>₹950</td><td>₹1,630</td><td>₹680</td><td>₹1,050</td><td>₹1,730</td></tr>
-<tr><th scope="row">Pattandur Agrahara</th><td>₹470</td><td>₹780</td><td>₹1,340</td><td>₹570</td><td>₹880</td><td>₹1,440</td></tr>
-<tr><th scope="row">Tin Factory</th><td>₹480</td><td>₹790</td><td>₹1,360</td><td>₹580</td><td>₹890</td><td>₹1,460</td></tr>
-</tbody>
-</table>
-</div>
-<p class="note">Rates shown are the proposed fares from the supplied KAVILO rate card.</p>
-</div>
-
 <div class="card">
 <h3>Payment Information</h3>
 <p>Customer pays the full trip fare directly to the driver by Cash or UPI.</p>
@@ -238,6 +165,95 @@ Enter your flight time to calculate the pickup time.
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
+
+const kaviloRates = {
+  "chandhapura": { city: { shared:660, sedan:1060, suv:1810 }, airport: { shared:760, sedan:1160, suv:1910 } },
+  "bommasandra": { city: { shared:640, sedan:1030, suv:1760 }, airport: { shared:740, sedan:1130, suv:1860 } },
+  "jigani": { city: { shared:690, sedan:1110, suv:1890 }, airport: { shared:790, sedan:1210, suv:1990 } },
+  "hebbagodi": { city: { shared:630, sedan:1020, suv:1730 }, airport: { shared:730, sedan:1120, suv:1830 } },
+  "electronic city – neeladri nagar": { city: { shared:620, sedan:1010, suv:1720 }, airport: { shared:720, sedan:1110, suv:1820 } },
+  "electronic city – phase 1": { city: { shared:600, sedan:980, suv:1670 }, airport: { shared:700, sedan:1080, suv:1770 } },
+  "kammasandra – hebbagodi": { city: { shared:630, sedan:1020, suv:1750 }, airport: { shared:730, sedan:1120, suv:1850 } },
+  "electronic city – phase 2": { city: { shared:610, sedan:990, suv:1690 }, airport: { shared:710, sedan:1090, suv:1790 } },
+  "sarjapura": { city: { shared:710, sedan:1140, suv:1950 }, airport: { shared:810, sedan:1240, suv:2050 } },
+  "dommasandra": { city: { shared:660, sedan:1060, suv:1810 }, airport: { shared:760, sedan:1160, suv:1910 } },
+  "kodati gate": { city: { shared:650, sedan:1050, suv:1780 }, airport: { shared:750, sedan:1150, suv:1880 } },
+  "konapana agrahara": { city: { shared:620, sedan:1010, suv:1730 }, airport: { shared:720, sedan:1110, suv:1830 } },
+  "hosa road": { city: { shared:560, sedan:920, suv:1580 }, airport: { shared:660, sedan:1020, suv:1680 } },
+  "gattahalli": { city: { shared:660, sedan:1070, suv:1830 }, airport: { shared:760, sedan:1170, suv:1930 } },
+  "choodasandra": { city: { shared:630, sedan:1030, suv:1750 }, airport: { shared:730, sedan:1130, suv:1850 } },
+  "rayasandra": { city: { shared:580, sedan:950, suv:1620 }, airport: { shared:680, sedan:1050, suv:1720 } },
+  "harlur": { city: { shared:620, sedan:1000, suv:1710 }, airport: { shared:720, sedan:1100, suv:1810 } },
+  "kudlu gate": { city: { shared:540, sedan:890, suv:1520 }, airport: { shared:640, sedan:990, suv:1620 } },
+  "begur": { city: { shared:560, sedan:910, suv:1560 }, airport: { shared:660, sedan:1010, suv:1660 } },
+  "hulimav": { city: { shared:550, sedan:910, suv:1550 }, airport: { shared:650, sedan:1010, suv:1650 } },
+  "bommanahalli": { city: { shared:520, sedan:860, suv:1470 }, airport: { shared:620, sedan:960, suv:1570 } },
+  "hsr layout": { city: { shared:630, sedan:1020, suv:1730 }, airport: { shared:730, sedan:1120, suv:1830 } },
+  "kotanur": { city: { shared:550, sedan:910, suv:1550 }, airport: { shared:650, sedan:1010, suv:1650 } },
+  "jp nagar": { city: { shared:530, sedan:870, suv:1480 }, airport: { shared:630, sedan:970, suv:1580 } },
+  "arekere": { city: { shared:530, sedan:870, suv:1490 }, airport: { shared:630, sedan:970, suv:1590 } },
+  "btm 1st stage": { city: { shared:500, sedan:830, suv:1420 }, airport: { shared:600, sedan:930, suv:1520 } },
+  "btm 2nd stage": { city: { shared:510, sedan:850, suv:1450 }, airport: { shared:610, sedan:950, suv:1550 } },
+  "jayanagar": { city: { shared:480, sedan:800, suv:1370 }, airport: { shared:580, sedan:900, suv:1470 } },
+  "banashankari": { city: { shared:500, sedan:820, suv:1410 }, airport: { shared:600, sedan:920, suv:1510 } },
+  "royal meenakshi mall – bannerghatta road": { city: { shared:550, sedan:890, suv:1530 }, airport: { shared:650, sedan:990, suv:1630 } },
+  "lalbagh": { city: { shared:460, sedan:770, suv:1320 }, airport: { shared:560, sedan:870, suv:1420 } },
+  "koramangala": { city: { shared:500, sedan:820, suv:1410 }, airport: { shared:600, sedan:920, suv:1510 } },
+  "indiranagar": { city: { shared:490, sedan:810, suv:1390 }, airport: { shared:590, sedan:910, suv:1490 } },
+  "ibbalur": { city: { shared:590, sedan:960, suv:1640 }, airport: { shared:690, sedan:1060, suv:1740 } },
+  "bellandur": { city: { shared:570, sedan:930, suv:1590 }, airport: { shared:670, sedan:1030, suv:1690 } },
+  "kadubeesanahalli": { city: { shared:550, sedan:900, suv:1530 }, airport: { shared:650, sedan:1000, suv:1630 } },
+  "maratahalli": { city: { shared:530, sedan:870, suv:1480 }, airport: { shared:630, sedan:970, suv:1580 } },
+  "mahadevapura": { city: { shared:490, sedan:810, suv:1390 }, airport: { shared:590, sedan:910, suv:1490 } },
+  "fraser town": { city: { shared:430, sedan:720, suv:1230 }, airport: { shared:530, sedan:820, suv:1330 } },
+  "cox town": { city: { shared:460, sedan:760, suv:1310 }, airport: { shared:560, sedan:860, suv:1410 } },
+  "halasuru": { city: { shared:450, sedan:740, suv:1280 }, airport: { shared:550, sedan:840, suv:1380 } },
+  "hal": { city: { shared:580, sedan:940, suv:1610 }, airport: { shared:680, sedan:1040, suv:1710 } },
+  "domlur": { city: { shared:480, sedan:790, suv:1360 }, airport: { shared:580, sedan:890, suv:1460 } },
+  "cv raman nagar": { city: { shared:480, sedan:790, suv:1360 }, airport: { shared:580, sedan:890, suv:1460 } },
+  "garudachar palya": { city: { shared:500, sedan:830, suv:1430 }, airport: { shared:600, sedan:930, suv:1530 } },
+  "hoodi": { city: { shared:520, sedan:850, suv:1460 }, airport: { shared:620, sedan:950, suv:1560 } },
+  "whitefield": { city: { shared:460, sedan:770, suv:1320 }, airport: { shared:560, sedan:870, suv:1420 } },
+  "vartur": { city: { shared:500, sedan:820, suv:1410 }, airport: { shared:600, sedan:920, suv:1510 } },
+  "mullur": { city: { shared:620, sedan:1010, suv:1720 }, airport: { shared:720, sedan:1110, suv:1820 } },
+  "balagere": { city: { shared:580, sedan:950, suv:1630 }, airport: { shared:680, sedan:1050, suv:1730 } },
+  "pattandur agrahara": { city: { shared:470, sedan:780, suv:1340 }, airport: { shared:570, sedan:880, suv:1440 } },
+  "tin factory": { city: { shared:480, sedan:790, suv:1360 }, airport: { shared:580, sedan:890, suv:1460 } }
+};
+const fareResult = document.getElementById("fareResult");
+const normalizeArea = value => value.toLowerCase()
+  .replace(/[–—]/g, "-").replace(/[^a-z0-9]+/g, " ").trim();
+function isAirportLocation(value) {
+  return /airport|kempegowda|\bterminal\s*[12]\b|\bt[12]\b/i.test(value);
+}
+function findRateArea(value) {
+  const input = normalizeArea(value);
+  for (const area of Object.keys(kaviloRates)) {
+    if (input === normalizeArea(area) || input.includes(normalizeArea(area))) return area;
+  }
+  return null;
+}
+function updateFare() {
+  const cityToAirport = direction.value === "city";
+  const cityAreaText = cityToAirport ? pickupField.value : dropField.value;
+  const airportText = cityToAirport ? dropField.value : pickupField.value;
+  const area = findRateArea(cityAreaText);
+  const airportOkay = isAirportLocation(airportText);
+  if (!cityAreaText.trim() || !airportText.trim()) {
+    fareResult.textContent = "Select pickup and drop to see your fare.";
+    return null;
+  }
+  if (!airportOkay || !area) {
+    fareResult.textContent = "Fare will appear when you select one of the 52 listed Bengaluru areas and Bengaluru Airport (T1 or T2).";
+    return null;
+  }
+  const directionRates = kaviloRates[area][cityToAirport ? "city" : "airport"];
+  const fare = directionRates[cab.value];
+  const cabName = cab.options[cab.selectedIndex].text;
+  fareResult.innerHTML = "<b>" + cabName + " fare: ₹" + fare.toLocaleString("en-IN") + "</b>";
+  return fare;
+}
+
 const citySlots = [
   "03:30","04:30","05:30","06:30","07:30",
   "09:00","11:00","13:00","15:00","17:00",
@@ -613,6 +629,12 @@ function updateAddressMode() {
   gpsAttempted = false;
 }
 
+
+[cab, direction, pickupField, dropField].forEach(field => {
+  field.addEventListener("change", updateFare);
+  field.addEventListener("input", updateFare);
+});
+
 setupAddressSuggestions("pickup");
 setupAddressSuggestions("drop");
 updateAddressMode();
@@ -632,6 +654,12 @@ document.getElementById("bookingForm").addEventListener("submit", function (even
     return;
   }
 
+  const selectedFare = updateFare();
+  if (selectedFare === null) {
+    alert("Please select a pickup area from the 52 KAVILO fare areas and Bengaluru Airport (T1 or T2).");
+    return;
+  }
+
   const pickupDateTime = updateSlot();
   if (!pickupDateTime) {
     alert("Please select your travel date and flight time.");
@@ -647,11 +675,12 @@ document.getElementById("bookingForm").addEventListener("submit", function (even
     }
   }
 
-  alert("Booking preview only. Real booking confirmation is not active yet.");
+  alert("KAVILO fare: ₹" + selectedFare.toLocaleString("en-IN") + "\\nBooking preview only. Real booking confirmation is not active yet.");
 });
 
 updateCab();
 updateSlot();
+updateFare();
 </script>
 </body>
   </html>
