@@ -72,11 +72,6 @@ footer{text-align:center;padding:22px;color:#65748a;font-size:13px}
 
 <div class="info" id="cabInfo"></div>
 
-<div class="result" id="fareResult" aria-live="polite" style="margin:10px 0 16px">
-Select pickup, drop and cab type to see your fare.
-</div>
-
-
 <label>Pickup Area / Location</label>
 <input
 type="text"
@@ -92,6 +87,11 @@ required>
 placeholder="Enter drop location or select terminal"
 list="airportTerminals" required>
 
+<div class="result" id="fareResult" aria-live="polite">
+Select pickup, drop and cab type to see your fare.
+</div>
+
+
 <datalist id="airportTerminals">
   <option value="Kempegowda International Airport - Terminal 1">
   <option value="Kempegowda International Airport - Terminal 2">
@@ -103,6 +103,7 @@ list="airportTerminals" required>
   <button type="button" class="map-button" id="selectDrop">Select Drop on Map</button>
 </div>
 <div id="map"></div>
+<div class="result" id="routeInfo">Road distance and travel time will appear after selecting both locations.</div>
 <p id="mapStatus" aria-live="polite">Choose Pickup or Drop, then tap the map to select a location.</p>
 
 <label>Travel Date</label>
@@ -165,95 +166,6 @@ Enter your flight time to calculate the pickup time.
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-
-const kaviloRates = {
-  "chandhapura": { city: { shared:660, sedan:1060, suv:1810 }, airport: { shared:760, sedan:1160, suv:1910 } },
-  "bommasandra": { city: { shared:640, sedan:1030, suv:1760 }, airport: { shared:740, sedan:1130, suv:1860 } },
-  "jigani": { city: { shared:690, sedan:1110, suv:1890 }, airport: { shared:790, sedan:1210, suv:1990 } },
-  "hebbagodi": { city: { shared:630, sedan:1020, suv:1730 }, airport: { shared:730, sedan:1120, suv:1830 } },
-  "electronic city – neeladri nagar": { city: { shared:620, sedan:1010, suv:1720 }, airport: { shared:720, sedan:1110, suv:1820 } },
-  "electronic city – phase 1": { city: { shared:600, sedan:980, suv:1670 }, airport: { shared:700, sedan:1080, suv:1770 } },
-  "kammasandra – hebbagodi": { city: { shared:630, sedan:1020, suv:1750 }, airport: { shared:730, sedan:1120, suv:1850 } },
-  "electronic city – phase 2": { city: { shared:610, sedan:990, suv:1690 }, airport: { shared:710, sedan:1090, suv:1790 } },
-  "sarjapura": { city: { shared:710, sedan:1140, suv:1950 }, airport: { shared:810, sedan:1240, suv:2050 } },
-  "dommasandra": { city: { shared:660, sedan:1060, suv:1810 }, airport: { shared:760, sedan:1160, suv:1910 } },
-  "kodati gate": { city: { shared:650, sedan:1050, suv:1780 }, airport: { shared:750, sedan:1150, suv:1880 } },
-  "konapana agrahara": { city: { shared:620, sedan:1010, suv:1730 }, airport: { shared:720, sedan:1110, suv:1830 } },
-  "hosa road": { city: { shared:560, sedan:920, suv:1580 }, airport: { shared:660, sedan:1020, suv:1680 } },
-  "gattahalli": { city: { shared:660, sedan:1070, suv:1830 }, airport: { shared:760, sedan:1170, suv:1930 } },
-  "choodasandra": { city: { shared:630, sedan:1030, suv:1750 }, airport: { shared:730, sedan:1130, suv:1850 } },
-  "rayasandra": { city: { shared:580, sedan:950, suv:1620 }, airport: { shared:680, sedan:1050, suv:1720 } },
-  "harlur": { city: { shared:620, sedan:1000, suv:1710 }, airport: { shared:720, sedan:1100, suv:1810 } },
-  "kudlu gate": { city: { shared:540, sedan:890, suv:1520 }, airport: { shared:640, sedan:990, suv:1620 } },
-  "begur": { city: { shared:560, sedan:910, suv:1560 }, airport: { shared:660, sedan:1010, suv:1660 } },
-  "hulimav": { city: { shared:550, sedan:910, suv:1550 }, airport: { shared:650, sedan:1010, suv:1650 } },
-  "bommanahalli": { city: { shared:520, sedan:860, suv:1470 }, airport: { shared:620, sedan:960, suv:1570 } },
-  "hsr layout": { city: { shared:630, sedan:1020, suv:1730 }, airport: { shared:730, sedan:1120, suv:1830 } },
-  "kotanur": { city: { shared:550, sedan:910, suv:1550 }, airport: { shared:650, sedan:1010, suv:1650 } },
-  "jp nagar": { city: { shared:530, sedan:870, suv:1480 }, airport: { shared:630, sedan:970, suv:1580 } },
-  "arekere": { city: { shared:530, sedan:870, suv:1490 }, airport: { shared:630, sedan:970, suv:1590 } },
-  "btm 1st stage": { city: { shared:500, sedan:830, suv:1420 }, airport: { shared:600, sedan:930, suv:1520 } },
-  "btm 2nd stage": { city: { shared:510, sedan:850, suv:1450 }, airport: { shared:610, sedan:950, suv:1550 } },
-  "jayanagar": { city: { shared:480, sedan:800, suv:1370 }, airport: { shared:580, sedan:900, suv:1470 } },
-  "banashankari": { city: { shared:500, sedan:820, suv:1410 }, airport: { shared:600, sedan:920, suv:1510 } },
-  "royal meenakshi mall – bannerghatta road": { city: { shared:550, sedan:890, suv:1530 }, airport: { shared:650, sedan:990, suv:1630 } },
-  "lalbagh": { city: { shared:460, sedan:770, suv:1320 }, airport: { shared:560, sedan:870, suv:1420 } },
-  "koramangala": { city: { shared:500, sedan:820, suv:1410 }, airport: { shared:600, sedan:920, suv:1510 } },
-  "indiranagar": { city: { shared:490, sedan:810, suv:1390 }, airport: { shared:590, sedan:910, suv:1490 } },
-  "ibbalur": { city: { shared:590, sedan:960, suv:1640 }, airport: { shared:690, sedan:1060, suv:1740 } },
-  "bellandur": { city: { shared:570, sedan:930, suv:1590 }, airport: { shared:670, sedan:1030, suv:1690 } },
-  "kadubeesanahalli": { city: { shared:550, sedan:900, suv:1530 }, airport: { shared:650, sedan:1000, suv:1630 } },
-  "maratahalli": { city: { shared:530, sedan:870, suv:1480 }, airport: { shared:630, sedan:970, suv:1580 } },
-  "mahadevapura": { city: { shared:490, sedan:810, suv:1390 }, airport: { shared:590, sedan:910, suv:1490 } },
-  "fraser town": { city: { shared:430, sedan:720, suv:1230 }, airport: { shared:530, sedan:820, suv:1330 } },
-  "cox town": { city: { shared:460, sedan:760, suv:1310 }, airport: { shared:560, sedan:860, suv:1410 } },
-  "halasuru": { city: { shared:450, sedan:740, suv:1280 }, airport: { shared:550, sedan:840, suv:1380 } },
-  "hal": { city: { shared:580, sedan:940, suv:1610 }, airport: { shared:680, sedan:1040, suv:1710 } },
-  "domlur": { city: { shared:480, sedan:790, suv:1360 }, airport: { shared:580, sedan:890, suv:1460 } },
-  "cv raman nagar": { city: { shared:480, sedan:790, suv:1360 }, airport: { shared:580, sedan:890, suv:1460 } },
-  "garudachar palya": { city: { shared:500, sedan:830, suv:1430 }, airport: { shared:600, sedan:930, suv:1530 } },
-  "hoodi": { city: { shared:520, sedan:850, suv:1460 }, airport: { shared:620, sedan:950, suv:1560 } },
-  "whitefield": { city: { shared:460, sedan:770, suv:1320 }, airport: { shared:560, sedan:870, suv:1420 } },
-  "vartur": { city: { shared:500, sedan:820, suv:1410 }, airport: { shared:600, sedan:920, suv:1510 } },
-  "mullur": { city: { shared:620, sedan:1010, suv:1720 }, airport: { shared:720, sedan:1110, suv:1820 } },
-  "balagere": { city: { shared:580, sedan:950, suv:1630 }, airport: { shared:680, sedan:1050, suv:1730 } },
-  "pattandur agrahara": { city: { shared:470, sedan:780, suv:1340 }, airport: { shared:570, sedan:880, suv:1440 } },
-  "tin factory": { city: { shared:480, sedan:790, suv:1360 }, airport: { shared:580, sedan:890, suv:1460 } }
-};
-const fareResult = document.getElementById("fareResult");
-const normalizeArea = value => value.toLowerCase()
-  .replace(/[–—]/g, "-").replace(/[^a-z0-9]+/g, " ").trim();
-function isAirportLocation(value) {
-  return /airport|kempegowda|\bterminal\s*[12]\b|\bt[12]\b/i.test(value);
-}
-function findRateArea(value) {
-  const input = normalizeArea(value);
-  for (const area of Object.keys(kaviloRates)) {
-    if (input === normalizeArea(area) || input.includes(normalizeArea(area))) return area;
-  }
-  return null;
-}
-function updateFare() {
-  const cityToAirport = direction.value === "city";
-  const cityAreaText = cityToAirport ? pickupField.value : dropField.value;
-  const airportText = cityToAirport ? dropField.value : pickupField.value;
-  const area = findRateArea(cityAreaText);
-  const airportOkay = isAirportLocation(airportText);
-  if (!cityAreaText.trim() || !airportText.trim()) {
-    fareResult.textContent = "Select pickup and drop to see your fare.";
-    return null;
-  }
-  if (!airportOkay || !area) {
-    fareResult.textContent = "Fare will appear when you select one of the 52 listed Bengaluru areas and Bengaluru Airport (T1 or T2).";
-    return null;
-  }
-  const directionRates = kaviloRates[area][cityToAirport ? "city" : "airport"];
-  const fare = directionRates[cab.value];
-  const cabName = cab.options[cab.selectedIndex].text;
-  fareResult.innerHTML = "<b>" + cabName + " fare: ₹" + fare.toLocaleString("en-IN") + "</b>";
-  return fare;
-}
-
 const citySlots = [
   "03:30","04:30","05:30","06:30","07:30",
   "09:00","11:00","13:00","15:00","17:00",
@@ -276,6 +188,8 @@ const travelDate = document.getElementById("travelDate");
 const slotResult = document.getElementById("slotResult");
 const pickupField = document.getElementById("pickup");
 const dropField = document.getElementById("drop");
+const airportPickupSelect = document.getElementById("airportPickupSelect");
+const airportDropSelect = document.getElementById("airportDropSelect");
 const mapStatus = document.getElementById("mapStatus");
 
 const cabRules = {
@@ -293,37 +207,22 @@ const cabRules = {
   }
 };
 
- 
 function updateCab() {
   const rule = cabRules[cab.value];
   const previous = Number(passengers.value) || 1;
-
   passengers.innerHTML = "";
 
-  if (cab.value === "shared") {
-    passengers.style.display = "";
-    passengers.previousElementSibling.style.display = "";
-    passengerNote.style.display = "";
-
-    for (let i = 1; i <= 3; i++) {
-      const option = document.createElement("option");
-      option.value = i;
-      option.textContent = i + (i === 1 ? " Passenger" : " Passengers");
-      passengers.appendChild(option);
-    }
-
-    passengers.value = String(previous <= 3 ? previous : 1);
-    passengerNote.textContent = "Maximum allowed: 3 passengers.";
-  } else {
-    passengers.style.display = "none";
-    passengers.previousElementSibling.style.display = "none";
-    passengerNote.style.display = "none";
-    passengers.value = String(rule.max);
+  for (let i = 1; i <= rule.max; i++) {
+    const option = document.createElement("option");
+    option.value = i;
+    option.textContent = i + (i === 1 ? " Passenger" : " Passengers");
+    passengers.appendChild(option);
   }
 
+  passengers.value = Math.min(previous, rule.max);
   cabInfo.textContent = rule.info;
+  passengerNote.textContent = "Maximum allowed: " + rule.max + " passengers.";
 }
-  
 
 function formatTime(time) {
   const [hours, minutes] = time.split(":").map(Number);
@@ -408,8 +307,18 @@ cab.addEventListener("change", () => {
   updateSlot();
 });
 direction.addEventListener("change", () => {
+  // Clear stale values so a city GPS address can never remain as an airport pickup.
+  pickupField.value = "";
+  dropField.value = "";
+  if (airportPickupSelect) airportPickupSelect.value = "";
+  if (airportDropSelect) airportDropSelect.value = "";
+  if (pickupMarker) { map.removeLayer(pickupMarker); pickupMarker = null; }
+  if (dropMarker) { map.removeLayer(dropMarker); dropMarker = null; }
+  if (routeLine) { map.removeLayer(routeLine); routeLine = null; }
+  gpsAttempted = false;
   updateSlot();
   updateAddressMode();
+  updateFareFromFields();
 });
 flightTime.addEventListener("input", updateSlot);
 travelDate.addEventListener("change", updateSlot);
@@ -418,6 +327,145 @@ const today = new Date();
 const localDate = new Date(today.getTime() - today.getTimezoneOffset() * 60000)
   .toISOString().split("T")[0];
 travelDate.min = localDate;
+
+
+const KAVILO_RATES = {"Chandhapura": {"city": {"shared": 660, "sedan": 1060, "suv": 1810}, "airport": {"shared": 760, "sedan": 1160, "suv": 1910}}, "Bommasandra": {"city": {"shared": 640, "sedan": 1030, "suv": 1760}, "airport": {"shared": 740, "sedan": 1130, "suv": 1860}}, "Jigani": {"city": {"shared": 690, "sedan": 1110, "suv": 1890}, "airport": {"shared": 790, "sedan": 1210, "suv": 1990}}, "Hebbagodi": {"city": {"shared": 630, "sedan": 1020, "suv": 1730}, "airport": {"shared": 730, "sedan": 1120, "suv": 1830}}, "Electronic City – Neeladri Nagar": {"city": {"shared": 620, "sedan": 1010, "suv": 1720}, "airport": {"shared": 720, "sedan": 1110, "suv": 1820}}, "Electronic City – Phase 1": {"city": {"shared": 600, "sedan": 980, "suv": 1670}, "airport": {"shared": 700, "sedan": 1080, "suv": 1770}}, "Kammasandra – Hebbagodi": {"city": {"shared": 630, "sedan": 1020, "suv": 1750}, "airport": {"shared": 730, "sedan": 1120, "suv": 1850}}, "Electronic City – Phase 2": {"city": {"shared": 610, "sedan": 990, "suv": 1690}, "airport": {"shared": 710, "sedan": 1090, "suv": 1790}}, "Sarjapura": {"city": {"shared": 710, "sedan": 1140, "suv": 1950}, "airport": {"shared": 810, "sedan": 1240, "suv": 2050}}, "Dommasandra": {"city": {"shared": 660, "sedan": 1060, "suv": 1810}, "airport": {"shared": 760, "sedan": 1160, "suv": 1910}}, "Kodati Gate": {"city": {"shared": 650, "sedan": 1050, "suv": 1780}, "airport": {"shared": 750, "sedan": 1150, "suv": 1880}}, "Konapana Agrahara": {"city": {"shared": 620, "sedan": 1010, "suv": 1730}, "airport": {"shared": 720, "sedan": 1110, "suv": 1830}}, "Hosa Road": {"city": {"shared": 560, "sedan": 920, "suv": 1580}, "airport": {"shared": 660, "sedan": 1020, "suv": 1680}}, "Gattahalli": {"city": {"shared": 660, "sedan": 1070, "suv": 1830}, "airport": {"shared": 760, "sedan": 1170, "suv": 1930}}, "Choodasandra": {"city": {"shared": 630, "sedan": 1030, "suv": 1750}, "airport": {"shared": 730, "sedan": 1130, "suv": 1850}}, "Rayasandra": {"city": {"shared": 580, "sedan": 950, "suv": 1620}, "airport": {"shared": 680, "sedan": 1050, "suv": 1720}}, "Harlur": {"city": {"shared": 620, "sedan": 1000, "suv": 1710}, "airport": {"shared": 720, "sedan": 1100, "suv": 1810}}, "Kudlu Gate": {"city": {"shared": 540, "sedan": 890, "suv": 1520}, "airport": {"shared": 640, "sedan": 990, "suv": 1620}}, "Begur": {"city": {"shared": 560, "sedan": 910, "suv": 1560}, "airport": {"shared": 660, "sedan": 1010, "suv": 1660}}, "Hulimav": {"city": {"shared": 550, "sedan": 910, "suv": 1550}, "airport": {"shared": 650, "sedan": 1010, "suv": 1650}}, "Bommanahalli": {"city": {"shared": 520, "sedan": 860, "suv": 1470}, "airport": {"shared": 620, "sedan": 960, "suv": 1570}}, "HSR Layout": {"city": {"shared": 630, "sedan": 1020, "suv": 1730}, "airport": {"shared": 730, "sedan": 1120, "suv": 1830}}, "Kotanur": {"city": {"shared": 550, "sedan": 910, "suv": 1550}, "airport": {"shared": 650, "sedan": 1010, "suv": 1650}}, "JP Nagar": {"city": {"shared": 530, "sedan": 870, "suv": 1480}, "airport": {"shared": 630, "sedan": 970, "suv": 1580}}, "Arekere": {"city": {"shared": 530, "sedan": 870, "suv": 1490}, "airport": {"shared": 630, "sedan": 970, "suv": 1590}}, "BTM 1st Stage": {"city": {"shared": 500, "sedan": 830, "suv": 1420}, "airport": {"shared": 600, "sedan": 930, "suv": 1520}}, "BTM 2nd Stage": {"city": {"shared": 510, "sedan": 850, "suv": 1450}, "airport": {"shared": 610, "sedan": 950, "suv": 1550}}, "Jayanagar": {"city": {"shared": 480, "sedan": 800, "suv": 1370}, "airport": {"shared": 580, "sedan": 900, "suv": 1470}}, "Banashankari": {"city": {"shared": 500, "sedan": 820, "suv": 1410}, "airport": {"shared": 600, "sedan": 920, "suv": 1510}}, "Royal Meenakshi Mall – Bannerghatta Road": {"city": {"shared": 550, "sedan": 890, "suv": 1530}, "airport": {"shared": 650, "sedan": 990, "suv": 1630}}, "Lalbagh": {"city": {"shared": 460, "sedan": 770, "suv": 1320}, "airport": {"shared": 560, "sedan": 870, "suv": 1420}}, "Koramangala": {"city": {"shared": 500, "sedan": 820, "suv": 1410}, "airport": {"shared": 600, "sedan": 920, "suv": 1510}}, "Indiranagar": {"city": {"shared": 490, "sedan": 810, "suv": 1390}, "airport": {"shared": 590, "sedan": 910, "suv": 1490}}, "Ibbalur": {"city": {"shared": 590, "sedan": 960, "suv": 1640}, "airport": {"shared": 690, "sedan": 1060, "suv": 1740}}, "Bellandur": {"city": {"shared": 570, "sedan": 930, "suv": 1590}, "airport": {"shared": 670, "sedan": 1030, "suv": 1690}}, "Kadubeesanahalli": {"city": {"shared": 550, "sedan": 900, "suv": 1530}, "airport": {"shared": 650, "sedan": 1000, "suv": 1630}}, "Maratahalli": {"city": {"shared": 530, "sedan": 870, "suv": 1480}, "airport": {"shared": 630, "sedan": 970, "suv": 1580}}, "Mahadevapura": {"city": {"shared": 490, "sedan": 810, "suv": 1390}, "airport": {"shared": 590, "sedan": 910, "suv": 1490}}, "Fraser Town": {"city": {"shared": 430, "sedan": 720, "suv": 1230}, "airport": {"shared": 530, "sedan": 820, "suv": 1330}}, "Cox Town": {"city": {"shared": 460, "sedan": 760, "suv": 1310}, "airport": {"shared": 560, "sedan": 860, "suv": 1410}}, "Halasuru": {"city": {"shared": 450, "sedan": 740, "suv": 1280}, "airport": {"shared": 550, "sedan": 840, "suv": 1380}}, "HAL": {"city": {"shared": 580, "sedan": 940, "suv": 1610}, "airport": {"shared": 680, "sedan": 1040, "suv": 1710}}, "Domlur": {"city": {"shared": 480, "sedan": 790, "suv": 1360}, "airport": {"shared": 580, "sedan": 890, "suv": 1460}}, "CV Raman Nagar": {"city": {"shared": 480, "sedan": 790, "suv": 1360}, "airport": {"shared": 580, "sedan": 890, "suv": 1460}}, "Garudachar Palya": {"city": {"shared": 500, "sedan": 830, "suv": 1430}, "airport": {"shared": 600, "sedan": 930, "suv": 1530}}, "Hoodi": {"city": {"shared": 520, "sedan": 850, "suv": 1460}, "airport": {"shared": 620, "sedan": 950, "suv": 1560}}, "Whitefield": {"city": {"shared": 460, "sedan": 770, "suv": 1320}, "airport": {"shared": 560, "sedan": 870, "suv": 1420}}, "Vartur": {"city": {"shared": 500, "sedan": 820, "suv": 1410}, "airport": {"shared": 600, "sedan": 920, "suv": 1510}}, "Mullur": {"city": {"shared": 620, "sedan": 1010, "suv": 1720}, "airport": {"shared": 720, "sedan": 1110, "suv": 1820}}, "Balagere": {"city": {"shared": 580, "sedan": 950, "suv": 1630}, "airport": {"shared": 680, "sedan": 1050, "suv": 1730}}, "Pattandur Agrahara": {"city": {"shared": 470, "sedan": 780, "suv": 1340}, "airport": {"shared": 570, "sedan": 880, "suv": 1440}}, "Tin Factory": {"city": {"shared": 480, "sedan": 790, "suv": 1360}, "airport": {"shared": 580, "sedan": 890, "suv": 1460}}};
+
+
+// Approximate map centres for the 52 existing KAVILO fare zones (Bengaluru).
+// The 5 km rule uses straight-line distance from these zone centres.
+const FARE_ZONE_CENTRES = {
+"Chandhapura":[12.800,77.687],"Bommasandra":[12.816,77.691],"Jigani":[12.784,77.640],"Hebbagodi":[12.822,77.663],
+"Electronic City – Neeladri Nagar":[12.845,77.660],"Electronic City – Phase 1":[12.839,77.677],"Kammasandra – Hebbagodi":[12.817,77.672],"Electronic City – Phase 2":[12.847,77.675],
+"Sarjapura":[12.859,77.786],"Dommasandra":[12.879,77.758],"Kodati Gate":[12.891,77.746],"Konapana Agrahara":[12.872,77.659],
+"Hosa Road":[12.885,77.645],"Gattahalli":[12.878,77.704],"Choodasandra":[12.895,77.681],"Rayasandra":[12.882,77.624],
+"Harlur":[12.900,77.649],"Kudlu Gate":[12.887,77.634],"Begur":[12.878,77.624],"Hulimav":[12.887,77.613],
+"Bommanahalli":[12.908,77.624],"HSR Layout":[12.911,77.638],"Kotanur":[12.873,77.641],"JP Nagar":[12.907,77.585],
+"Arekere":[12.887,77.596],"BTM 1st Stage":[12.916,77.610],"BTM 2nd Stage":[12.916,77.609],"Jayanagar":[12.925,77.583],
+"Banashankari":[12.925,77.565],"Royal Meenakshi Mall – Bannerghatta Road":[12.858,77.601],"Lalbagh":[12.950,77.584],"Koramangala":[12.935,77.624],
+"Indiranagar":[12.978,77.640],"Ibbalur":[12.923,77.676],"Bellandur":[12.930,77.678],"Kadubeesanahalli":[12.935,77.695],
+"Maratahalli":[12.956,77.701],"Mahadevapura":[12.991,77.692],"Fraser Town":[12.998,77.613],"Cox Town":[12.993,77.620],
+"Halasuru":[12.973,77.624],"HAL":[12.958,77.659],"Domlur":[12.960,77.638],"CV Raman Nagar":[12.985,77.667],
+"Garudachar Palya":[12.996,77.701],"Hoodi":[12.991,77.715],"Whitefield":[12.969,77.750],"Vartur":[12.940,77.747],
+"Mullur":[12.905,77.754],"Balagere":[12.936,77.723],"Pattandur Agrahara":[12.981,77.748],"Tin Factory":[13.000,77.676]
+};
+function straightLineKm(lat1, lon1, lat2, lon2) {
+  const rad = v => v * Math.PI / 180;
+  const dLat = rad(lat2-lat1), dLon = rad(lon2-lon1);
+  const a = Math.sin(dLat/2)**2 + Math.cos(rad(lat1))*Math.cos(rad(lat2))*Math.sin(dLon/2)**2;
+  return 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+function nearestFareZone(lat, lon) {
+  let nearest = null, distance = Infinity;
+  for (const [zone, point] of Object.entries(FARE_ZONE_CENTRES)) {
+    const d = straightLineKm(lat, lon, point[0], point[1]);
+    if (d < distance) { nearest = zone; distance = d; }
+  }
+  return nearest ? {zone: nearest, distance} : null;
+}
+
+const fareResult = document.getElementById("fareResult");
+const zoneAliases = {
+  "Chandhapura":["chandhapura"],"Bommasandra":["bommasandra"],"Jigani":["jigani"],
+  "Hebbagodi":["he apagodi","hebagodi","hebbagodi"],"Electronic City – Neeladri Nagar":["neeladri nagar","neeladri"],
+  "Electronic City – Phase 1":["electronic city phase 1","electronic city phase i"],"Kammasandra – Hebbagodi":["kammasandra","kammasandra hebbagodi"],
+  "Electronic City – Phase 2":["electronic city phase 2","electronic city phase ii"],"Sarjapura":["sarjapur","sarjapura"],
+  "Dommasandra":["dommasandra"],"Kodati Gate":["kodati"],"Konapana Agrahara":["konapana agrahara"],
+  "Hosa Road":["hosa road"],"Gattahalli":["gattahalli"],"Choodasandra":["choodasandra"],
+  "Rayasandra":["rayasandra"],"Harlur":["harlur"],"Kudlu Gate":["kudlu gate"],"Begur":["begur"],
+  "Hulimav":["hulimav"],"Bommanahalli":["bommanahalli"],"HSR Layout":["hsr layout","hsr"],
+  "Kotanur":["kotanur"],"JP Nagar":["jp nagar","j p nagar"],"Arekere":["arekere"],
+  "BTM 1st Stage":["btm 1st","btm first"],"BTM 2nd Stage":["btm 2nd","btm second"],
+  "Jayanagar":["jayanagar"],"Banashankari":["banashankari"],"Royal Meenakshi Mall – Bannerghatta Road":["royal meenakshi","bannerghatta road"],
+  "Lalbagh":["lalbagh"],"Koramangala":["koramangala"],"Indiranagar":["indiranagar"],
+  "Ibbalur":["ibbalur"],"Bellandur":["bellandur"],"Kadubeesanahalli":["kadubeesanahalli"],
+  "Maratahalli":["marathahalli","maratahalli"],"Mahadevapura":["mahadevapura"],
+  "Fraser Town":["fraser town"],"Cox Town":["cox town"],"Halasuru":["halasuru","ulsoor"],
+  "HAL":["hal"],"Domlur":["domlur"],"CV Raman Nagar":["c v raman","cv raman"],
+  "Garudachar Palya":["garudachar palya"],"Hoodi":["hoodi"],"Whitefield":["whitefield"],
+  "Vartur":["varthur","vartur"],"Mullur":["mullur"],"Balagere":["balagere"],
+  "Pattandur Agrahara":["pattandur"],"Tin Factory":["tin factory"]
+};
+function cleanZoneText(s) {
+  return (s || "").toLowerCase().replace(/[^a-z0-9]+/g," ").replace(/\s+/g," ").trim();
+}
+function zoneFromText(s) {
+  const t = " " + cleanZoneText(s) + " ";
+  // Prefer longer aliases first to avoid matching HAL inside unrelated words.
+  const entries = Object.entries(zoneAliases).sort((a,b) =>
+    Math.max(...b[1].map(x=>x.length)) - Math.max(...a[1].map(x=>x.length)));
+  for (const [zone, aliases] of entries) {
+    for (const alias of aliases) {
+      const a = cleanZoneText(alias);
+      if (a && t.includes(" " + a + " ")) return zone;
+    }
+  }
+  return null;
+}
+function airportText(s) {
+  return /airport|kempegowda|bengaluru international|terminal\s*[12]|\bt[12]\b/i.test(s || "");
+}
+function fareForZone(zone) {
+  const directionKey = direction.value === "city" ? "city" : "airport";
+  const fare = KAVILO_RATES[zone]?.[directionKey]?.[cab.value];
+  if (!fare) return null;
+  fareResult.innerHTML = "<b>" + cab.options[cab.selectedIndex].text +
+    " fare: ₹" + fare.toLocaleString("en-IN") + "</b><div class='note'>Fare zone: " +
+    zone + "</div>";
+  window.kaviloSelectedFare = fare;
+  window.kaviloSelectedZone = zone;
+  return fare;
+}
+function updateFareFromFields() {
+  const citySide = direction.value === "city" ? pickupField.value : dropField.value;
+  const airportSide = direction.value === "city" ? dropField.value : pickupField.value;
+  if (!citySide.trim() || !airportText(airportSide)) {
+    fareResult.textContent = "Select the city location and Bengaluru Airport to calculate fare.";
+    window.kaviloSelectedFare = null; window.kaviloSelectedZone = null; return null;
+  }
+  const zone = zoneFromText(citySide);
+  if (!zone) {
+    fareResult.textContent = "Location area not identified yet. Choose the exact address suggestion or select the point on the map.";
+    window.kaviloSelectedFare = null; window.kaviloSelectedZone = null; return null;
+  }
+  return fareForZone(zone);
+}
+async function updateFareFromCoordinates(lat, lon) {
+  try {
+    const url = "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=" +
+      lat + "&lon=" + lon + "&zoom=18&addressdetails=1";
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Reverse geocode failed");
+    const d = await response.json();
+    const a = d.address || {};
+    const addressParts = [a.suburb,a.neighbourhood,a.quarter,a.residential,a.road,a.city_district,
+      a.town,a.city,a.village,a.county,d.display_name].filter(Boolean).join(", ");
+    const zone = zoneFromText(addressParts);
+    if (zone) return fareForZone(zone);
+    const nearest = nearestFareZone(lat, lon);
+    if (nearest && nearest.distance <= 5) {
+      const fare = fareForZone(nearest.zone);
+      fareResult.innerHTML += "<div class='note'>Unlisted location is " + nearest.distance.toFixed(1) + " km (straight-line) from " + nearest.zone + ". Same area fare applied within the 5 km radius.</div>";
+      window.kaviloSelectedZone = nearest.zone;
+      window.kaviloUnlistedDistanceKm = nearest.distance;
+      return fare;
+    }
+    window.kaviloSelectedFare = null; window.kaviloSelectedZone = null;
+    window.kaviloUnlistedDistanceKm = nearest ? nearest.distance : null;
+    fareResult.textContent = nearest
+      ? "Unlisted location is beyond the 5 km radius of the nearest listed area (" + nearest.zone + ", " + nearest.distance.toFixed(1) + " km). Special fare quote required; booking is not confirmed."
+      : "Could not identify the nearest KAVILO fare area. Please select the location on the map.";
+    return null;
+  } catch (e) {
+    fareResult.textContent = "Could not identify the GPS fare zone. Please choose the address suggestion.";
+    window.kaviloSelectedFare = null; window.kaviloSelectedZone = null;
+    return null;
+  }
+}
+[cab, direction, pickupField, dropField].forEach(el => {
+  el.addEventListener("change", updateFareFromFields);
+  el.addEventListener("input", updateFareFromFields);
+});
 
 /* MAP SETUP */
 const map = L.map("map").setView([12.9716, 77.5946], 11);
@@ -471,10 +519,14 @@ async function drawRoadRoute() {
     if (routeLine) map.removeLayer(routeLine);
     routeLine = L.geoJSON(data.routes[0].geometry).addTo(map);
     map.fitBounds(routeLine.getBounds(), {padding: [30, 30]});
+    const km = data.routes[0].distance / 1000;
+    const mins = Math.round(data.routes[0].duration / 60);
+    document.getElementById("routeInfo").innerHTML = "<b>Road distance:</b> " + km.toFixed(1) + " km<br><b>Estimated travel time:</b> " + (mins >= 60 ? Math.floor(mins/60) + " hr " + (mins%60) + " min" : mins + " min");
     mapStatus.textContent = "Pickup and Drop selected. Road route displayed.";
   } catch (error) {
     if (routeLine) map.removeLayer(routeLine);
     routeLine = null;
+    document.getElementById("routeInfo").textContent = "Road distance and travel time are temporarily unavailable.";
     mapStatus.textContent = "Both locations are selected, but the road route service is temporarily unavailable.";
   }
 }
@@ -500,36 +552,47 @@ map.on("click", async function (event) {
     const data = await response.json();
     field.value = data.display_name || lat.toFixed(5) + ", " + lon.toFixed(5);
     mapStatus.textContent = label + " location selected successfully.";
+    if (!isAirportField(activeField)) await updateFareFromCoordinates(lat, lon);
+    else updateFareFromFields();
   } catch (error) {
     field.value = lat.toFixed(5) + ", " + lon.toFixed(5);
     mapStatus.textContent = "Address unavailable. Coordinates have been entered instead.";
+    updateFareFromCoordinates(lat, lon);
   }
 });
 
-// Get current location only for City to Airport pickup.
-pickupField.addEventListener("focus", function () {
-  if (direction.value !== "city" || this.value.trim() !== "" || gpsAttempted) return;
-  if (!navigator.geolocation) return;
-  gpsAttempted = true;
-  this.placeholder = "Getting your current location...";
+// Get current location on the city side for both trip directions.
+function requestCurrentCityLocation() {
+  const cityField = direction.value === "city" ? pickupField : dropField;
+  if (cityField.value.trim() !== "" || !navigator.geolocation) return;
+  cityField.placeholder = "Getting your current location...";
   navigator.geolocation.getCurrentPosition(async function (position) {
-    const lat = position.coords.latitude;
-    const lon = position.coords.longitude;
+    const lat = position.coords.latitude, lon = position.coords.longitude;
     try {
-      const response = await fetch("https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=" + lat + "&lon=" + lon);
-      if (!response.ok) throw new Error("GPS address lookup failed");
+      const response = await fetch("https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=" + lat + "&lon=" + lon + "&zoom=18&addressdetails=1");
       const data = await response.json();
-      pickupField.value = data.display_name || lat + ", " + lon;
-    } catch (error) {
-      pickupField.value = lat.toFixed(5) + ", " + lon.toFixed(5);
+      cityField.value = data.display_name || lat.toFixed(5) + ", " + lon.toFixed(5);
+    } catch (e) {
+      cityField.value = lat.toFixed(5) + ", " + lon.toFixed(5);
     }
-    pickupField.placeholder = "Search pickup address";
-    setMarker("pickup", lat, lon, "Pickup Location");
+    cityField.placeholder = "Search city address";
+    setMarker(cityField.id, lat, lon, "City Location");
     map.setView([lat, lon], 16);
+    await updateFareFromCoordinates(lat, lon);
   }, function () {
-    pickupField.placeholder = "Search pickup address";
-    mapStatus.textContent = "Location permission was not granted. You can enter the pickup address manually.";
-  });
+    cityField.placeholder = "Search city address";
+    mapStatus.textContent = "Location permission not granted. Enter address or select it on the map.";
+  }, {enableHighAccuracy:true, timeout:12000, maximumAge:30000});
+}
+pickupField.addEventListener("focus", function () {
+  if (direction.value === "city" && !gpsAttempted && !this.value.trim()) {
+    gpsAttempted = true; requestCurrentCityLocation();
+  }
+});
+dropField.addEventListener("focus", function () {
+  if (direction.value === "airport" && !gpsAttempted && !this.value.trim()) {
+    gpsAttempted = true; requestCurrentCityLocation();
+  }
 });
 
 async function searchAddress(fieldId) {
@@ -554,6 +617,8 @@ async function searchAddress(fieldId) {
     setActiveField(fieldId);
     setMarker(fieldId, lat, lon, fieldId === "pickup" ? "Pickup Location" : "Drop Location");
     map.setView([lat, lon], 15);
+    if (!isAirportField(fieldId)) await updateFareFromCoordinates(lat, lon);
+    else updateFareFromFields();
   } catch (error) {
     mapStatus.textContent = "Address search is temporarily unavailable. Please try again or select the location on the map.";
   } finally {
@@ -631,7 +696,31 @@ function setupAddressSuggestions(fieldId) {
   });
 }
 
+function updateAirportTerminalMode() {
+  if (!airportPickupSelect || !airportDropSelect) return;
+  const airportPickup = direction.value === "airport";
+  const airportDrop = direction.value === "city";
+  airportPickupSelect.style.display = airportPickup ? "block" : "none";
+  airportDropSelect.style.display = airportDrop ? "block" : "none";
+  pickupField.style.display = airportPickup ? "none" : "block";
+  dropField.style.display = airportDrop ? "none" : "block";
+  pickupField.required = !airportPickup;
+  dropField.required = !airportDrop;
+  airportPickupSelect.required = airportPickup;
+  airportDropSelect.required = airportDrop;
+  if (airportPickup) pickupField.value = airportPickupSelect.value;
+  if (airportDrop) dropField.value = airportDropSelect.value;
+}
+[airportPickupSelect, airportDropSelect].filter(Boolean).forEach(function (select) {
+  select.addEventListener("change", function () {
+    if (select === airportPickupSelect) pickupField.value = select.value;
+    else dropField.value = select.value;
+    updateFareFromFields();
+  });
+});
+
 function updateAddressMode() {
+  updateAirportTerminalMode();
   Object.entries(suggestionLists).forEach(([fieldId, list]) => {
     list.innerHTML = "";
     const field = document.getElementById(fieldId);
@@ -642,13 +731,8 @@ function updateAddressMode() {
     }
   });
   gpsAttempted = false;
+  updateFareFromFields();
 }
-
-
-[cab, direction, pickupField, dropField].forEach(field => {
-  field.addEventListener("change", updateFare);
-  field.addEventListener("input", updateFare);
-});
 
 setupAddressSuggestions("pickup");
 setupAddressSuggestions("drop");
@@ -669,9 +753,11 @@ document.getElementById("bookingForm").addEventListener("submit", function (even
     return;
   }
 
-  const selectedFare = updateFare();
+  const selectedFare = updateFareFromFields();
   if (selectedFare === null) {
-    alert("Please select a pickup area from the 52 KAVILO fare areas and Bengaluru Airport (T1 or T2).");
+    alert(window.kaviloUnlistedDistanceKm > 5
+      ? "This location is outside the 5 km area radius. A special fare quote is required before booking."
+      : "Please select a recognised KAVILO fare area and Bengaluru Airport location.");
     return;
   }
 
@@ -690,12 +776,12 @@ document.getElementById("bookingForm").addEventListener("submit", function (even
     }
   }
 
-  alert("KAVILO fare: ₹" + selectedFare.toLocaleString("en-IN") + "\\nBooking preview only. Real booking confirmation is not active yet.");
+  alert("KAVILO " + cab.options[cab.selectedIndex].text + " fare: ₹" + selectedFare.toLocaleString("en-IN") + "\\nBooking preview only. Real booking confirmation is not active yet.");
 });
 
 updateCab();
 updateSlot();
-updateFare();
+updateFareFromFields();
 </script>
 </body>
   </html>
