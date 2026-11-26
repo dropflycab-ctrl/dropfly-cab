@@ -34,7 +34,15 @@ button{width:100%;padding:14px;background:#f4a900;color:#172033;border:0;border-
 .service h4{margin:0 0 7px;color:#173e6b}
 .result{background:#edf5ff;padding:14px;border-radius:9px;margin-top:15px;line-height:1.7}
 .info{background:#f5f8fc;padding:12px;border-radius:8px;margin-top:12px;line-height:1.6;font-size:14px}
-footer{text-align:center;padding:22px;color:#65748a;font-size:13px}
+footer{text-align:center;padding:22px 22px 100px;color:#65748a;font-size:13px}
+body{padding-bottom:82px}
+.bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:2000;background:#fff;border-top:1px solid #dce3ed;display:grid;grid-template-columns:repeat(4,1fr);padding:8px 4px calc(8px + env(safe-area-inset-bottom));box-shadow:0 -3px 14px #00000010}
+.nav-item{background:transparent;color:#65748a;border:0;border-radius:8px;margin:0;padding:7px 2px;font-size:12px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:4px}
+.nav-item .nav-icon{font-size:20px;line-height:1.1}
+.nav-item.active{color:#173e6b;background:#edf5ff}
+.panel-view{display:none;max-width:650px;margin:20px auto;padding:0 14px;min-height:55vh}
+.panel-view.active{display:block}
+.panel-message{background:#fff;border-radius:14px;padding:20px;box-shadow:0 3px 12px #00000012;line-height:1.6}
 </style>
 </head>
 
@@ -50,7 +58,7 @@ footer{text-align:center;padding:22px;color:#65748a;font-size:13px}
 <p>City to Airport | Airport to City</p>
 </section>
 
-<div class="container">
+<div class="container" id="homeView">
 
 <div class="card">
 <h3>Book Your Cab</h3>
@@ -172,6 +180,35 @@ Enter your flight time to calculate the pickup time.
 </div>
 
 </div>
+
+<section class="panel-view" id="myBookingView">
+  <div class="panel-message">
+    <h3>My Booking</h3>
+    <p id="myBookingMessage">Your bookings will appear here after the booking system is connected.</p>
+    <p class="note">Booking confirmation and automatic navigation after Admin approval will be enabled when the secure shared database and Admin Panel are connected.</p>
+  </div>
+</section>
+<section class="panel-view" id="helpView">
+  <div class="panel-message">
+    <h3>Help & Support</h3>
+    <p>Need help with your KAVILO cab booking?</p>
+    <p class="note">Customer support contact details will be added here.</p>
+  </div>
+</section>
+<section class="panel-view" id="accountView">
+  <div class="panel-message">
+    <h3>My Account</h3>
+    <p>Customer profile and login details will appear here.</p>
+    <p class="note">Secure customer login will be connected in the next development stage.</p>
+  </div>
+</section>
+
+<nav class="bottom-nav" aria-label="Customer navigation">
+  <button type="button" class="nav-item active" data-view="home"><span class="nav-icon">🏠</span><span>Home</span></button>
+  <button type="button" class="nav-item" data-view="myBooking"><span class="nav-icon">📋</span><span>My Booking</span></button>
+  <button type="button" class="nav-item" data-view="help"><span class="nav-icon">🎧</span><span>Help</span></button>
+  <button type="button" class="nav-item" data-view="account"><span class="nav-icon">👤</span><span>Account</span></button>
+</nav>
 
 <footer>
 © 2026 KAVILO. All Rights Reserved.
@@ -798,6 +835,30 @@ document.getElementById("bookingForm").addEventListener("submit", function (even
 updateCab();
 updateSlot();
 updateFareFromFields();
+
+// Customer bottom navigation. Booking data is not yet connected to a server.
+const customerViews = {
+  home: document.getElementById("homeView"),
+  myBooking: document.getElementById("myBookingView"),
+  help: document.getElementById("helpView"),
+  account: document.getElementById("accountView")
+};
+function showCustomerView(viewName) {
+  Object.entries(customerViews).forEach(([name, element]) => {
+    element.classList.toggle("active", name === viewName);
+  });
+  document.querySelectorAll(".nav-item").forEach(button => {
+    button.classList.toggle("active", button.dataset.view === viewName);
+  });
+  if (viewName === "myBooking") {
+    document.getElementById("myBookingMessage").textContent =
+      "No confirmed bookings yet. Your confirmed bookings will appear here.";
+  }
+  window.scrollTo({top: 0, behavior: "smooth"});
+}
+document.querySelectorAll(".nav-item").forEach(button => {
+  button.addEventListener("click", () => showCustomerView(button.dataset.view));
+});
 </script>
 </body>
   </html>
