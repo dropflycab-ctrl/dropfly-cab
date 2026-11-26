@@ -7,8 +7,7 @@ KAVILO is an airport and city cab booking platform designed to make travel easy 
 ## 🌐 Website
 
 Visit KAVILO:
-
-**https://dropflycab-ctrl.github.io/kavilo/**⁠
+https://dropflycab-ctrl.github.io/kavilo/
 
 ## 🚖 Our Cab Services
 
