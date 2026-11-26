@@ -172,13 +172,13 @@ Enter your flight time to calculate the pickup time.
 
 <div class="card">
 <h3>Payment Information</h3>
-<p>Customer pays 100% of the trip fare directly to the driver by Cash or UPI. KAVILO does not collect online payments from customers.</p>
+<p>Customer pays the full trip fare directly to the driver by Cash or UPI.</p>
 </div>
 
 </div>
 
 </section>
-<section id="paymentScreen" class="step-screen"><header><h1>KAVILO</h1><p>Payment</p></header><div class="container"><div class="card"><h3>Review Your Booking</h3><div id="paymentSummary" class="result"></div><h3 style="margin-top:20px">Pay to Driver</h3><div class="result"><div style="font-size:14px;color:#65748a">Amount to pay your driver</div><div id="driverPayAmount" style="font-size:30px;font-weight:800;color:#16834a;margin:6px 0">₹0</div><p style="margin:0">Pay the full trip fare directly to your driver. KAVILO does not collect any online payment.</p></div><label class="pay-choice"><input type="radio" name="paymentMethod" value="Cash" checked> Cash – Pay to driver</label><label class="pay-choice"><input type="radio" name="paymentMethod" value="UPI"> UPI – Pay to driver</label><p class="step-note">Choose how you will pay your driver: Cash or UPI. No payment is made to KAVILO on this page.</p><button type="button" id="confirmPreview">Continue</button><button type="button" class="secondary-btn" id="backBooking">Back to Booking</button></div></div></section>
+<section id="paymentScreen" class="step-screen"><header><h1>KAVILO</h1><p>Payment</p></header><div class="container"><div class="card"><h3>Review Your Booking</h3><div id="paymentSummary" class="result"></div><h3 style="margin-top:20px">Choose Payment Method</h3><label class="pay-choice"><input type="radio" name="paymentMethod" value="Cash" checked> Cash – Pay directly to driver</label><label class="pay-choice"><input type="radio" name="paymentMethod" value="UPI"> UPI – Pay directly to driver</label><p class="step-note">Payment collection is not connected yet. This records your payment preference only.</p><button type="button" id="confirmPreview">Continue</button><button type="button" class="secondary-btn" id="backBooking">Back to Booking</button></div></div></section>
 <section id="confirmedScreen" class="step-screen"><header><h1>KAVILO</h1><p>Booking Summary</p></header><div class="container"><div class="card"><h3>Booking Details Preview</h3><div class="result" id="confirmationSummary"></div><p class="step-note">Preview only: booking is not saved or officially confirmed yet. Real confirmation will be enabled after backend and database setup.</p><button type="button" id="returnHome">Back to Home</button></div></div></section>
 <footer>
 © 2026 KAVILO. All Rights Reserved.
@@ -430,9 +430,22 @@ function fareForZone(zone) {
   const directionKey = direction.value === "city" ? "city" : "airport";
   const fare = KAVILO_RATES[zone]?.[directionKey]?.[cab.value];
   if (!fare) return null;
-  fareResult.innerHTML = "<b>" + cab.options[cab.selectedIndex].text +
-    " fare: ₹" + fare.toLocaleString("en-IN") + "</b>";
+
+  const passengerCount = Number(passengers.value) || 1;
+  const totalFare = cab.value === "shared" ? fare * passengerCount : fare;
+
+  if (cab.value === "shared") {
+    fareResult.innerHTML =
+      "<b>Shared Cab fare per passenger: ₹" + fare.toLocaleString("en-IN") +
+      "</b><br><b>Passengers: " + passengerCount +
+      "</b><br><b>Total fare: ₹" + totalFare.toLocaleString("en-IN") + "</b>";
+  } else {
+    fareResult.innerHTML = "<b>" + cab.options[cab.selectedIndex].text +
+      " total fare: ₹" + totalFare.toLocaleString("en-IN") + "</b>";
+  }
+
   window.kaviloSelectedFare = fare;
+  window.kaviloSelectedTotalFare = totalFare;
   window.kaviloSelectedZone = zone;
   return fare;
 }
@@ -482,7 +495,7 @@ async function updateFareFromCoordinates(lat, lon) {
     return null;
   }
 }
-[cab, direction, pickupField, dropField].forEach(el => {
+[cab, direction, pickupField, dropField, passengers].forEach(el => {
   el.addEventListener("change", updateFareFromFields);
   el.addEventListener("input", updateFareFromFields);
 });
@@ -799,12 +812,22 @@ document.getElementById("bookingForm").addEventListener("submit", function (even
 
   const customerName = document.getElementById("customerName").value.trim();
   const customerMobile = document.getElementById("mobile").value.trim();
-  window.kaviloBookingPreview = {customerName, customerMobile, direction:direction.options[direction.selectedIndex].text, cab:cab.options[cab.selectedIndex].text, pickup:pickupField.value.trim(), drop:dropField.value.trim(), date:travelDate.value, flightTime:flightTime.value, passengers:passengers.value, fare:selectedFare};
+  const passengerCount = Number(passengers.value) || 1;
+  const farePerPassenger = cab.value === "shared" ? selectedFare : null;
+  const totalFare = cab.value === "shared" ? selectedFare * passengerCount : selectedFare;
+  window.kaviloBookingPreview = {customerName, customerMobile, direction:direction.options[direction.selectedIndex].text, cab:cab.options[cab.selectedIndex].text, cabType:cab.value, pickup:pickupField.value.trim(), drop:dropField.value.trim(), date:travelDate.value, flightTime:flightTime.value, passengers:passengerCount, farePerPassenger, fare:totalFare};
   renderPaymentSummary(); showKaviloScreen("paymentScreen");
 });
 function showKaviloScreen(id){document.querySelectorAll(".step-screen").forEach(el=>el.classList.remove("active"));document.getElementById(id).classList.add("active");window.scrollTo(0,0);if(id==="bookingScreen")setTimeout(()=>map.invalidateSize(),250);}
 function escK(v){const d=document.createElement("div");d.textContent=String(v);return d.innerHTML;}
-function renderPaymentSummary(){const b=window.kaviloBookingPreview;if(!b)return;const amount="₹"+Number(b.fare).toLocaleString("en-IN");document.getElementById("paymentSummary").innerHTML=[["Customer",b.customerName],["Trip",b.direction],["Cab",b.cab],["Pickup",b.pickup],["Drop",b.drop],["Date / Flight time",b.date+" / "+b.flightTime],["Passengers",b.passengers],["Trip Fare",amount],["Pay to Driver",amount]].map(x=>"<div class='summary-line'><span>"+x[0]+"</span><b>"+escK(x[1])+"</b></div>").join("");document.getElementById("driverPayAmount").textContent=amount;}
+function renderPaymentSummary(){
+  const b=window.kaviloBookingPreview;
+  if(!b)return;
+  const rows=[["Customer",b.customerName],["Trip",b.direction],["Cab",b.cab],["Pickup",b.pickup],["Drop",b.drop],["Date / Flight time",b.date+" / "+b.flightTime],["Passengers",b.passengers]];
+  if(b.cabType==="shared") rows.push(["Fare per passenger","₹"+Number(b.farePerPassenger).toLocaleString("en-IN")]);
+  rows.push(["Total trip fare","₹"+Number(b.fare).toLocaleString("en-IN")],["Pay to Driver","₹"+Number(b.fare).toLocaleString("en-IN")]);
+  document.getElementById("paymentSummary").innerHTML=rows.map(x=>"<div class='summary-line'><span>"+x[0]+"</span><b>"+escK(x[1])+"</b></div>").join("");
+}
 document.getElementById("getStarted").addEventListener("click",()=>showKaviloScreen("loginScreen"));
 document.getElementById("backWelcome").addEventListener("click",()=>showKaviloScreen("welcomeScreen"));
 document.getElementById("googleLogin").addEventListener("click",()=>{document.getElementById("authNotice").textContent="Google Sign-In is not connected yet. Firebase Authentication will be connected in the next phase.";});
