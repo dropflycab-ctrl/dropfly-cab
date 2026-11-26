@@ -424,8 +424,7 @@ function fareForZone(zone) {
   const fare = KAVILO_RATES[zone]?.[directionKey]?.[cab.value];
   if (!fare) return null;
   fareResult.innerHTML = "<b>" + cab.options[cab.selectedIndex].text +
-    " fare: ₹" + fare.toLocaleString("en-IN") + "</b><div class='note'>Fare zone: " +
-    zone + "</div>";
+    " fare: ₹" + fare.toLocaleString("en-IN") + "</b>";
   window.kaviloSelectedFare = fare;
   window.kaviloSelectedZone = zone;
   return fare;
@@ -459,7 +458,7 @@ async function updateFareFromCoordinates(lat, lon) {
     const nearest = nearestFareZone(lat, lon);
     if (nearest && nearest.distance <= 5) {
       const fare = fareForZone(nearest.zone);
-      fareResult.innerHTML += "<div class='note'>Unlisted location is " + nearest.distance.toFixed(1) + " km (straight-line) from " + nearest.zone + ". Same area fare applied within the 5 km radius.</div>";
+      // Apply the nearest listed area's fare silently for unlisted locations within 5 km.
       window.kaviloSelectedZone = nearest.zone;
       window.kaviloUnlistedDistanceKm = nearest.distance;
       return fare;
@@ -467,7 +466,7 @@ async function updateFareFromCoordinates(lat, lon) {
     window.kaviloSelectedFare = null; window.kaviloSelectedZone = null;
     window.kaviloUnlistedDistanceKm = nearest ? nearest.distance : null;
     fareResult.textContent = nearest
-      ? "Unlisted location is beyond the 5 km radius of the nearest listed area (" + nearest.zone + ", " + nearest.distance.toFixed(1) + " km). Special fare quote required; booking is not confirmed."
+      ? "Service not available in this location. The selected area is outside KAVILO's 5 km service radius."
       : "Could not identify the nearest KAVILO fare area. Please select the location on the map.";
     return null;
   } catch (e) {
@@ -771,7 +770,7 @@ document.getElementById("bookingForm").addEventListener("submit", function (even
   const selectedFare = updateFareFromFields();
   if (selectedFare === null) {
     alert(window.kaviloUnlistedDistanceKm > 5
-      ? "This location is outside the 5 km area radius. A special fare quote is required before booking."
+      ? "Service not available in this location. Booking cannot continue."
       : "Please select a recognised KAVILO fare area and Bengaluru Airport location.");
     return;
   }
