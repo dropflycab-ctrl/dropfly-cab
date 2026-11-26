@@ -34,20 +34,16 @@ button{width:100%;padding:14px;background:#f4a900;color:#172033;border:0;border-
 .service h4{margin:0 0 7px;color:#173e6b}
 .result{background:#edf5ff;padding:14px;border-radius:9px;margin-top:15px;line-height:1.7}
 .info{background:#f5f8fc;padding:12px;border-radius:8px;margin-top:12px;line-height:1.6;font-size:14px}
-footer{text-align:center;padding:22px 22px 100px;color:#65748a;font-size:13px}
-body{padding-bottom:82px}
-.bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:2000;background:#fff;border-top:1px solid #dce3ed;display:grid;grid-template-columns:repeat(4,1fr);padding:8px 4px calc(8px + env(safe-area-inset-bottom));box-shadow:0 -3px 14px #00000010}
-.nav-item{background:transparent;color:#65748a;border:0;border-radius:8px;margin:0;padding:7px 2px;font-size:12px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:4px}
-.nav-item .nav-icon{font-size:20px;line-height:1.1}
-.nav-item.active{color:#173e6b;background:#edf5ff}
-.panel-view{display:none;max-width:650px;margin:20px auto;padding:0 14px;min-height:55vh}
-.panel-view.active{display:block}
-.panel-message{background:#fff;border-radius:14px;padding:20px;box-shadow:0 3px 12px #00000012;line-height:1.6}
+footer{text-align:center;padding:22px;color:#65748a;font-size:13px}
+
+.step-screen{display:none}.step-screen.active{display:block}.brand-mark{font-size:34px;font-weight:800;letter-spacing:2px;color:#173e6b;text-align:center;margin:8px 0}.google-btn{background:#fff;border:1px solid #cbd5e1;color:#172033}.secondary-btn{background:#173e6b;color:#fff}.step-note{font-size:13px;color:#65748a;line-height:1.5;text-align:center}.pay-choice{display:flex;align-items:center;gap:10px;border:1px solid #dce3ed;border-radius:10px;padding:14px;margin:10px 0}.pay-choice input{width:auto}.summary-line{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #edf0f5}
 </style>
 </head>
 
 <body>
-
+<section id="welcomeScreen" class="step-screen active"><header><h1>KAVILO</h1><p>Bengaluru Airport & City Cab Service</p></header><div class="container"><div class="card" style="text-align:center;padding:28px 20px"><div class="brand-mark">KAVILO</div><h2 style="color:#173e6b">Your Airport Ride, Made Easy</h2><p>City to Airport | Airport to City</p><p class="note">Comfortable rides across Bengaluru</p><button type="button" id="getStarted">Get Started</button></div></div></section>
+<section id="loginScreen" class="step-screen"><header><h1>KAVILO</h1><p>Customer Sign In</p></header><div class="container"><div class="card" style="text-align:center"><h3>Welcome to KAVILO</h3><p>Sign in with your Gmail account to continue.</p><button type="button" class="google-btn" id="googleLogin">Continue with Google</button><p class="step-note">Gmail login only. Phone number login is not available.</p><div class="info" id="authNotice">Google Sign-In setup will be connected in the next phase. This is a login page preview.</div><button type="button" class="secondary-btn" id="previewContinue">Continue to Booking Page Preview</button><button type="button" style="background:#e8edf4" id="backWelcome">Back</button></div></div></section>
+<section id="bookingScreen" class="step-screen">
 <header>
 <h1>KAVILO</h1>
 <p>Bengaluru Airport & City Cab Service</p>
@@ -58,7 +54,7 @@ body{padding-bottom:82px}
 <p>City to Airport | Airport to City</p>
 </section>
 
-<div class="container" id="homeView">
+<div class="container">
 
 <div class="card">
 <h3>Book Your Cab</h3>
@@ -176,40 +172,14 @@ Enter your flight time to calculate the pickup time.
 
 <div class="card">
 <h3>Payment Information</h3>
-<p>Customer pays the full trip fare directly to the driver by Cash or UPI.</p>
+<p>Customer pays 100% of the trip fare directly to the driver by Cash or UPI. KAVILO does not collect online payments from customers.</p>
 </div>
 
 </div>
 
-<section class="panel-view" id="myBookingView">
-  <div class="panel-message">
-    <h3>My Booking</h3>
-    <p id="myBookingMessage">Your bookings will appear here after the booking system is connected.</p>
-    <p class="note">Booking confirmation and automatic navigation after Admin approval will be enabled when the secure shared database and Admin Panel are connected.</p>
-  </div>
 </section>
-<section class="panel-view" id="helpView">
-  <div class="panel-message">
-    <h3>Help & Support</h3>
-    <p>Need help with your KAVILO cab booking?</p>
-    <p class="note">Customer support contact details will be added here.</p>
-  </div>
-</section>
-<section class="panel-view" id="accountView">
-  <div class="panel-message">
-    <h3>My Account</h3>
-    <p>Customer profile and login details will appear here.</p>
-    <p class="note">Secure customer login will be connected in the next development stage.</p>
-  </div>
-</section>
-
-<nav class="bottom-nav" aria-label="Customer navigation">
-  <button type="button" class="nav-item active" data-view="home"><span class="nav-icon">🏠</span><span>Home</span></button>
-  <button type="button" class="nav-item" data-view="myBooking"><span class="nav-icon">📋</span><span>My Booking</span></button>
-  <button type="button" class="nav-item" data-view="help"><span class="nav-icon">🎧</span><span>Help</span></button>
-  <button type="button" class="nav-item" data-view="account"><span class="nav-icon">👤</span><span>Account</span></button>
-</nav>
-
+<section id="paymentScreen" class="step-screen"><header><h1>KAVILO</h1><p>Payment</p></header><div class="container"><div class="card"><h3>Review Your Booking</h3><div id="paymentSummary" class="result"></div><h3 style="margin-top:20px">Pay to Driver</h3><div class="result"><div style="font-size:14px;color:#65748a">Amount to pay your driver</div><div id="driverPayAmount" style="font-size:30px;font-weight:800;color:#16834a;margin:6px 0">₹0</div><p style="margin:0">Pay the full trip fare directly to your driver. KAVILO does not collect any online payment.</p></div><label class="pay-choice"><input type="radio" name="paymentMethod" value="Cash" checked> Cash – Pay to driver</label><label class="pay-choice"><input type="radio" name="paymentMethod" value="UPI"> UPI – Pay to driver</label><p class="step-note">Choose how you will pay your driver: Cash or UPI. No payment is made to KAVILO on this page.</p><button type="button" id="confirmPreview">Continue</button><button type="button" class="secondary-btn" id="backBooking">Back to Booking</button></div></div></section>
+<section id="confirmedScreen" class="step-screen"><header><h1>KAVILO</h1><p>Booking Summary</p></header><div class="container"><div class="card"><h3>Booking Details Preview</h3><div class="result" id="confirmationSummary"></div><p class="step-note">Preview only: booking is not saved or officially confirmed yet. Real confirmation will be enabled after backend and database setup.</p><button type="button" id="returnHome">Back to Home</button></div></div></section>
 <footer>
 © 2026 KAVILO. All Rights Reserved.
 </footer>
@@ -829,36 +799,22 @@ document.getElementById("bookingForm").addEventListener("submit", function (even
 
   const customerName = document.getElementById("customerName").value.trim();
   const customerMobile = document.getElementById("mobile").value.trim();
-  alert("Customer: " + customerName + "\\nMobile: " + customerMobile + "\\nKAVILO " + cab.options[cab.selectedIndex].text + " fare: ₹" + selectedFare.toLocaleString("en-IN") + "\\nBooking preview only. Real booking confirmation is not active yet.");
+  window.kaviloBookingPreview = {customerName, customerMobile, direction:direction.options[direction.selectedIndex].text, cab:cab.options[cab.selectedIndex].text, pickup:pickupField.value.trim(), drop:dropField.value.trim(), date:travelDate.value, flightTime:flightTime.value, passengers:passengers.value, fare:selectedFare};
+  renderPaymentSummary(); showKaviloScreen("paymentScreen");
 });
-
+function showKaviloScreen(id){document.querySelectorAll(".step-screen").forEach(el=>el.classList.remove("active"));document.getElementById(id).classList.add("active");window.scrollTo(0,0);if(id==="bookingScreen")setTimeout(()=>map.invalidateSize(),250);}
+function escK(v){const d=document.createElement("div");d.textContent=String(v);return d.innerHTML;}
+function renderPaymentSummary(){const b=window.kaviloBookingPreview;if(!b)return;const amount="₹"+Number(b.fare).toLocaleString("en-IN");document.getElementById("paymentSummary").innerHTML=[["Customer",b.customerName],["Trip",b.direction],["Cab",b.cab],["Pickup",b.pickup],["Drop",b.drop],["Date / Flight time",b.date+" / "+b.flightTime],["Passengers",b.passengers],["Trip Fare",amount],["Pay to Driver",amount]].map(x=>"<div class='summary-line'><span>"+x[0]+"</span><b>"+escK(x[1])+"</b></div>").join("");document.getElementById("driverPayAmount").textContent=amount;}
+document.getElementById("getStarted").addEventListener("click",()=>showKaviloScreen("loginScreen"));
+document.getElementById("backWelcome").addEventListener("click",()=>showKaviloScreen("welcomeScreen"));
+document.getElementById("googleLogin").addEventListener("click",()=>{document.getElementById("authNotice").textContent="Google Sign-In is not connected yet. Firebase Authentication will be connected in the next phase.";});
+document.getElementById("previewContinue").addEventListener("click",()=>showKaviloScreen("bookingScreen"));
+document.getElementById("backBooking").addEventListener("click",()=>showKaviloScreen("bookingScreen"));
+document.getElementById("confirmPreview").addEventListener("click",()=>{const b=window.kaviloBookingPreview;if(!b)return;const method=document.querySelector('input[name="paymentMethod"]:checked').value;document.getElementById("confirmationSummary").innerHTML=document.getElementById("paymentSummary").innerHTML+"<div class='summary-line'><span>Payment preference</span><b>"+method+" (pay driver directly)</b></div>";showKaviloScreen("confirmedScreen");});
+document.getElementById("returnHome").addEventListener("click",()=>showKaviloScreen("welcomeScreen"));
 updateCab();
 updateSlot();
 updateFareFromFields();
-
-// Customer bottom navigation. Booking data is not yet connected to a server.
-const customerViews = {
-  home: document.getElementById("homeView"),
-  myBooking: document.getElementById("myBookingView"),
-  help: document.getElementById("helpView"),
-  account: document.getElementById("accountView")
-};
-function showCustomerView(viewName) {
-  Object.entries(customerViews).forEach(([name, element]) => {
-    element.classList.toggle("active", name === viewName);
-  });
-  document.querySelectorAll(".nav-item").forEach(button => {
-    button.classList.toggle("active", button.dataset.view === viewName);
-  });
-  if (viewName === "myBooking") {
-    document.getElementById("myBookingMessage").textContent =
-      "No confirmed bookings yet. Your confirmed bookings will appear here.";
-  }
-  window.scrollTo({top: 0, behavior: "smooth"});
-}
-document.querySelectorAll(".nav-item").forEach(button => {
-  button.addEventListener("click", () => showCustomerView(button.dataset.view));
-});
 </script>
 </body>
   </html>
